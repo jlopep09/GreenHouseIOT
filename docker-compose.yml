@@ -1,0 +1,102 @@
+services:
+  api:
+    build:
+      context: ./COMPONENTS/s00_GreenHouse_DataSource/
+      target: builder
+    environment:
+      PORT: 8000
+    ports:
+      - '8001:8001'
+    restart: "no"
+    depends_on:
+      - kafka
+    volumes:
+      - ./COMPONENTS/s00_GreenHouse_DataSource/app:/code/app
+    networks:
+      - red_local_compartida
+    profiles:
+      - layer1
+      - layer12
+  db:
+    image: mariadb
+    container_name: mariadb
+    restart: "no"
+    environment:
+      MARIADB_ROOT_PASSWORD: 123456
+    ports:
+      - 3306:3306
+    volumes:
+      - ./COMPONENTS/s01_GreenHouse_DataCore/mariadb_data:/var/lib/mysql
+    networks:
+      - mariadb_network
+    profiles:
+      - layer2
+      - layerDB
+      - layer12
+
+  data_processing:
+    build:
+      context: ./COMPONENTS/s01_GreenHouse_DataCore/
+      target: builder
+    networks:
+      - mariadb_network
+      - red_local_compartida
+    depends_on:
+      - kafka
+    ports:
+      - '8002:8002'
+    restart: "no"
+    profiles:
+      - layer2
+      - layer12
+  web:
+    build:
+      context: ./COMPONENTS/s02_GreenHouse_DataMining/
+      target: builder
+    networks:
+      - red_local_compartida
+    ports:
+      - '80:3000'
+      - '8003:8000'
+    restart: "no"
+    volumes:
+      - ./COMPONENTS/s02_GreenHouse_DataMining/app:/code/app
+    profiles:
+      - layer3
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - red_local_compartida
+    profiles:
+      - layer1
+      - layer2
+      - layer12
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - red_local_compartida
+    profiles:
+      - layer1
+      - layer2
+      - layer12
+
+networks:
+  mariadb_network:
+  red_local_compartida:
+    external: true

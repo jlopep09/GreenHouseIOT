@@ -1,0 +1,8 @@
+fastapi[all]
+uvicorn
+requests
+pydantic
+pandas
+mariadb
+kafka-python
+numpy
