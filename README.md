@@ -1,6 +1,6 @@
 # General Run
 
-docker compose up --build
+docker compose --profile all up --build
 
 # Layers
 layer1
