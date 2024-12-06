@@ -1,6 +1,6 @@
 -- --------------------------------------------------------
 -- Host:                         localhost
--- Versión del servidor:         11.5.2-MariaDB-ubu2404 - mariadb.org binary distribution
+-- Versión del servidor:         11.6.2-MariaDB-ubu2404 - mariadb.org binary distribution
 -- SO del servidor:              debian-linux-gnu
 -- HeidiSQL Versión:             12.8.0.6908
 -- --------------------------------------------------------
@@ -9,7 +9,7 @@
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+01:00' */;
+/*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `sensor_reads` (
   `gh_id` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `gh_id` (`gh_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=949 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1474 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- La exportación de datos fue deseleccionada.
 
