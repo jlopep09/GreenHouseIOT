@@ -27,27 +27,28 @@ def navbar() -> rx.Component:
                     navbar_link("Contact", "/#"),
                     spacing="5",
                 ),
-                rx.hstack(
-                    dark_mode_toggle(),
-                    rx.menu.root(
-                        rx.menu.trigger(
-                            rx.icon_button(
-                                rx.icon("user"),
-                                size="2",
-                                radius="full",
-                            )
-                        ),
-                        rx.menu.content(
-                            rx.menu.item("Settings"),
-                            rx.menu.item("Help"),
-                            rx.menu.separator(),
-                            rx.menu.item("Log out"),
-                        ),
-                        justify="end",
-                    ),
-                    margin_left="5.5em"
-                )
-                ,
+                
+                #rx.hstack(
+                 #   dark_mode_toggle(),
+                #    rx.menu.root(
+                #        rx.menu.trigger(
+                #            rx.icon_button(
+                #                rx.icon("user"),
+                #                size="2",
+                #                radius="full",
+                #            )
+                #        ),
+                #        rx.menu.content(
+                #            rx.menu.item("Settings"),
+                #            rx.menu.item("Help"),
+                #            rx.menu.separator(),
+                #            rx.menu.item("Log out"),
+                #        ),
+                #        justify="end",
+                #    ),
+                #    margin_left="5.5em"
+                #),
+                
                 justify="between",
                 align_items="center",
             ),
@@ -66,6 +67,7 @@ def navbar() -> rx.Component:
                     ),
                     align_items="center",
                 ),
+                
                 rx.hstack(
                     rx.menu.root(
                         rx.menu.trigger(
@@ -80,24 +82,25 @@ def navbar() -> rx.Component:
                         justify="end",
                     ), 
                     dark_mode_toggle(),
-                    rx.menu.root(
-                        rx.menu.trigger(
-                            rx.icon_button(
-                                rx.icon("user"),
-                                size="2",
-                                radius="full",
-                            )
-                        ),
-                        rx.menu.content(
-                            rx.menu.item("Settings"),
-                            rx.menu.item("Help"),
-                            rx.menu.separator(),
-                            rx.menu.item("Log out"),
-                        ),
-                        justify="end",
-                    )
-                )
-                ,
+                     
+                    #rx.menu.root(
+                    #    rx.menu.trigger(
+                    #        rx.icon_button(
+                    #            rx.icon("user"),
+                    #            size="2",
+                    ##            radius="full",
+                    #        )
+                   #     ),
+                    #    rx.menu.content(
+                    #        rx.menu.item("Settings"),
+                    #        rx.menu.item("Help"),
+                    #        rx.menu.separator(),
+                    #        rx.menu.item("Log out"),
+                    #    ),
+                    #    justify="end",
+                    #)
+                     
+                ),
                 justify="between",
                 align_items="center",
             ),

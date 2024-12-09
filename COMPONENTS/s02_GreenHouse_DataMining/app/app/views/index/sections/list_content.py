@@ -17,7 +17,7 @@ def content_card_list() -> rx.Component:
                     spacing="2"
             ),
             get_gh_stack(),
-            rx.button(rx.icon("circle-plus"), on_click=DataQueryGH.create_greenhouse),
+            #rx.button(rx.icon("circle-plus"), on_click=DataQueryGH.create_greenhouse),
             rx.text(DataQueryGH.api_response),
 
             

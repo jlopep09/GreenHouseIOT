@@ -7,10 +7,10 @@
 #include <TimeLib.h>
 
 //NETWORK CONFIG
-const char* ssid = "MOVISTAR_C4BF";
-const char* password = "77772EE1698861A4B165";
-String serverName = "http://192.168.1.44:8001/send/sensordata";
-String gh_name = "Invernadero-01";
+const char* ssid = "jlopep09";
+const char* password = "jlopep09";
+String serverName = "http://192.168.237.240:8001/send/sensordata";
+String gh_name = "Invernadero-02";
 
 void connectToWiFi();
 void sendSensorData();
