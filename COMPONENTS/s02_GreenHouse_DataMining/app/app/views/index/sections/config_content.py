@@ -2,7 +2,7 @@ import reflex as rx
 from app.backend.data_query import DataQueryGH
 from app.components.card_img import get_img_elem
 from enum import Enum
-
+from app.pages.reads_list import TableReadsState
 class TempState(rx.State):
     # Función para redirigir a la subpágina con un parámetro
     temp_page_url:str = "/temp"
@@ -64,9 +64,11 @@ def get_division(img_url:str, variant: Variant, icon_1: str = "clock") -> rx.Com
     return rx.hstack(
         rx.vstack(
             get_img_elem(img_url),
+            
             height="100%", 
             width = "50%",),
         rx.vstack(
+            
             rx.cond(variant == Variant.LIGHT,
                 rx.flex(rx.switch(on_change = ImgState.switchState, default_checked=ImgState.is_on),width = "60%", height = "50px", background_color = "gray", justify="center", align="center", border_radius = "5px"),
                 rx.cond(
@@ -76,6 +78,9 @@ def get_division(img_url:str, variant: Variant, icon_1: str = "clock") -> rx.Com
                 )                  
             ),
             getDialog(variant),
+            rx.cond(variant== Variant.TEMP,
+                rx.text(TableReadsState.get_last_temp_data, align="center", size="3")
+            ),
             height="100%", 
             width = "50%",
             justify="center",
@@ -145,7 +150,11 @@ def getDialog(variant = Variant) -> rx.Component:
             ),
         ),
         rx.dialog.root(
-            rx.dialog.trigger(rx.button(rx.icon("clock"), width = "60%", height = "50px")),
+            rx.cond(
+                    DataQueryGH.is_gh_selected,
+                    rx.dialog.trigger(rx.button(rx.icon("clock"), width = "60%", height = "50px")),
+                    rx.dialog.trigger(rx.button(rx.icon("clock"), width = "60%", height = "50px", disabled=True))
+                ),
             rx.dialog.content(
                 rx.dialog.title("Programación de ventiladores y calentadores"),
                 rx.dialog.description(

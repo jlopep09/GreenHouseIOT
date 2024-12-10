@@ -43,6 +43,37 @@ class TableReadsState(DataQueryGH):
             result.append(entry.temperature) 
         return result
     @rx.var
+    def get_last_temp_data(self) -> str:
+        # Filtra por gh_id igual a DataQueryGH.selected_gh_index
+        if not self.is_gh_selected:
+            return "Temperatura: -"
+        self.fetch_data()
+        result = []
+        for entry in self._reads_list:
+            result.append(entry.temperature)
+        if len(result)>0:
+            return "Temperatura: "+str(result.pop())+"°C"
+        return "Temperatura: -"
+    @rx.var
+    def humidity_data(self) -> List[List[str]]:
+        # Filtra por gh_id igual a DataQueryGH.selected_gh_index
+        result = []
+        for entry in self._reads_list:
+            result.append(entry.humidity) 
+        return result
+    @rx.var
+    def get_last_humidity_data(self) -> str:
+        # Filtra por gh_id igual a DataQueryGH.selected_gh_index
+        if not self.is_gh_selected:
+            return "Humedad del sustrato: -"
+        self.fetch_data()
+        result = []
+        for entry in self._reads_list:
+            result.append(entry.humidity)
+        if len(result)>0:
+            return "Humedad del sustrato: "+str(result.pop())+"%"
+        return "Humedad del sustrato: -"
+    @rx.var
     def dates_data(self) -> List[List[str]]:
         # Filtra por gh_id igual a DataQueryGH.selected_gh_index
         result = []
@@ -60,7 +91,6 @@ class TableReadsState(DataQueryGH):
 
         try:
             # Construir la URL con el valor capturado
-    
             response = requests.get(self.get_api_url)
             response.raise_for_status()
             reads_list_data = response.json()

@@ -1,6 +1,7 @@
 import reflex as rx
 from app.components.card_img import get_img_elem
 from app.backend.data_query import DataQueryGH
+from app.pages.reads_list import TableReadsState
 
 
 class ReadsState(rx.State):
@@ -31,11 +32,13 @@ def get_division(img_url:str,main_variant: bool=False, switch_variant: bool= Fal
             width = "50%",),
         rx.cond(not main_variant,
             rx.vstack(
+                
                 rx.cond(switch_variant,
                     rx.flex(rx.switch(),width = "60%", height = "50px", background_color = "gray", justify="center", align="center", border_radius = "5px"),
                     popup_water_now()
                 ),
                 getDialog(),
+                rx.text(TableReadsState.get_last_humidity_data, align="center", size="3"),
                 height="100%", 
                 width = "50%",
                 justify="center",
@@ -72,7 +75,11 @@ def get_division(img_url:str,main_variant: bool=False, switch_variant: bool= Fal
     )
 def getDialog() -> rx.Component:
     return rx.dialog.root(
-            rx.dialog.trigger(rx.button(rx.icon("clock"), width = "60%", height = "50px")),
+            rx.cond(
+                    DataQueryGH.is_gh_selected,
+                    rx.dialog.trigger(rx.button(rx.icon("clock"), width = "60%", height = "50px")),
+                    rx.dialog.trigger(rx.button(rx.icon("clock"), width = "60%", height = "50px", disabled=True))
+                ),
             rx.dialog.content(
                 rx.dialog.title("Programación de riego"),
                 rx.dialog.description(
@@ -114,9 +121,11 @@ def getDialog() -> rx.Component:
         ),
 def popup_water_now() -> rx.Component:
     return rx.alert_dialog.root(
-        rx.alert_dialog.trigger(
-            rx.button(rx.icon("droplet"), width = "60%", height = "50px"),
-        ),
+        rx.cond(
+                    DataQueryGH.is_gh_selected,
+                    rx.alert_dialog.trigger(rx.button(rx.icon("droplet"), width = "60%", height = "50px")),
+                    rx.alert_dialog.trigger(rx.button(rx.icon("droplet"), width = "60%", height = "50px", disabled=True))
+                ),
         rx.alert_dialog.content(
             rx.alert_dialog.title("Suministrar agua"),
             rx.alert_dialog.description(
