@@ -44,21 +44,24 @@ def get_division(img_url:str,main_variant: bool=False, switch_variant: bool= Fal
                 padding_left="2em",
             ),
             rx.vstack(
-                    rx.heading(rx.text("Invernadero", align="left", text_decoration = "underline"), as_="h3",width = "100%", text_align = "left", padding_bottom= "0.5em", size="4", padding_x = "0.5em"),
-                    rx.text("- "+DataQueryGH.get_selected_gh_name, width = "100%", text_align = "left", padding_left="1em"  ),
-                    rx.text("- "+DataQueryGH.get_selected_gh_desc, width = "100%", text_align = "left", padding_left="1em"  ),
-                    rx.text("- "+DataQueryGH.get_selected_gh_date, width = "100%", text_align = "left", padding_left="1em"  ),
-                    rx.cond(
-                        DataQueryGH.is_gh_selected,
-                        rx.button("Mostrar Lecturas",on_click=lambda: ReadsState.go_to_reads_list()),
-                        rx.button("Mostrar Lecturas",disabled=True),
+                    rx.center(
+                        rx.heading(rx.text("Invernadero", align="center", text_decoration = "underline"), as_="h3",width = "100%", text_align = "left", padding_bottom= "0.5em", size="4", padding_x = "0.5em"),
+                        rx.text(DataQueryGH.get_selected_gh_name, width = "100%", text_align = "center", padding_left="0em"  ),
+                        rx.text(DataQueryGH.get_selected_gh_desc, width = "100%", text_align = "center", padding_left="0em"  ),
+                        rx.text(DataQueryGH.get_selected_gh_date, width = "100%", text_align = "center", padding_left="0em", padding_bottom = "1em"  ),
+                        rx.cond(
+                            DataQueryGH.is_gh_selected,
+                            rx.button("Mostrar Lecturas",on_click=lambda: ReadsState.go_to_reads_list()),
+                            rx.button("Mostrar Lecturas",disabled=True),
+                        ),
+                        width = "100%",
+                        direction="column"
                     ),
-                    
                     height="100%", 
                     width = "50%",
                     justify="center",
                     spacing="0",
-                    padding_left="2em"
+                    padding_left="2em",
                     ),
                 
             

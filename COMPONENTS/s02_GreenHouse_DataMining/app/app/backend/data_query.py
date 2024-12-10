@@ -22,7 +22,7 @@ class DataQueryGH(rx.State):
         for greenhouse in self._greenhouses_list:
             if greenhouse.gh_id == self.selected_gh_index:
                 return greenhouse.name
-        return ""
+        return "-"
     @rx.var
     def get_selected_gh_id(self) -> str:
         for greenhouse in self._greenhouses_list:
@@ -38,13 +38,13 @@ class DataQueryGH(rx.State):
                     return greenhouse.description
                 else:
                     return "Sin descripción"
-        return ""
+        return "-"
     @rx.var
     def get_selected_gh_date(self) -> str:
         for greenhouse in self._greenhouses_list:
             if greenhouse.gh_id == self.selected_gh_index:
                 return greenhouse.date
-        return ""
+        return "-"
     
     def fetch_data(self):
         print("Intentando hacer fetch")
