@@ -1,6 +1,25 @@
 import reflex as rx
-from app.components.navbar_link import navbar_link
 from app.components.darkmode_togle import dark_mode_toggle
+
+class NavbarState(rx.State):
+    
+    home_url:str = "/"
+    about_url:str = "/about"
+    github_url:str = "https://github.com/jlopep09/GreenHouseIOT"
+    contact_url:str = "/contact"
+
+    @rx.event
+    def go_to_home(self):
+        return rx.redirect(self.home_url, external=False)
+    @rx.event
+    def go_to_about(self):
+        return rx.redirect(self.about_url, external=False)
+    @rx.event
+    def go_to_github(self):
+        return rx.redirect(self.github_url, external=True)
+    @rx.event
+    def go_to_contact(self):
+        return rx.redirect(self.contact_url, external=False)
 
 def app_name_section() -> rx.Component:
     return  rx.hstack(
@@ -11,7 +30,7 @@ def app_name_section() -> rx.Component:
                     border_radius="25%",
                 ),
                 rx.heading(
-                    "Greenhouse IOT", size="7", weight="bold"
+                    "Greenhouse IOT", size="7", weight="bold",cursor="pointer",on_click=lambda: NavbarState.go_to_home()
                 ),
                 align_items="center",
             )
@@ -22,18 +41,18 @@ def middle_section(mobile_mode:bool) -> rx.Component:
                             rx.icon("menu", size=30)
                         ),
                         rx.menu.content(
-                            rx.menu.item("Home"),
-                            rx.menu.item("About"),
-                            rx.menu.item("Github"),
-                            rx.menu.item("Contact"),
+                            rx.menu.item("Home",cursor="pointer",on_click=lambda: NavbarState.go_to_home()),
+                            rx.menu.item("About",cursor="pointer",on_click=lambda: NavbarState.go_to_about()),
+                            rx.menu.item("Github",cursor="pointer",on_click=lambda: NavbarState.go_to_github()),
+                            rx.menu.item("Contact",cursor="pointer",on_click=lambda: NavbarState.go_to_contact()),
                         ),
                         justify="end",
                     )
     return rx.hstack(
-            navbar_link("Home", "/"),
-            navbar_link("About", "/#"),
-            navbar_link("Github", "/#"),
-            navbar_link("Contact", "/#"),
+            rx.link(rx.text("Home", size="4", weight="medium"), href=NavbarState.home_url, is_external=False),
+            rx.link(rx.text("About", size="4", weight="medium"), href=NavbarState.about_url, is_external=False),
+            rx.link(rx.text("Github", size="4", weight="medium"), href=NavbarState.github_url, is_external=True),
+            rx.link(rx.text("Contact", size="4", weight="medium"), href=NavbarState.contact_url, is_external=False),
             spacing="5",
         )
 def profile_section() -> rx.Component: 
