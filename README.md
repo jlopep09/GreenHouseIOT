@@ -9,5 +9,8 @@ layer12
 layer3
 layerDB
 
-docker compose --profile layer1 up --build
+docker compose --profile layer12 up --build
+
+# Network
+docker network create red_local_compartida
 
