@@ -34,7 +34,10 @@ class DataQueryGH(rx.State):
     def get_selected_gh_desc(self) -> str:
         for greenhouse in self._greenhouses_list:
             if greenhouse.gh_id == self.selected_gh_index:
-                return greenhouse.description
+                if greenhouse.description:
+                    return greenhouse.description
+                else:
+                    return "Sin descripción"
         return ""
     @rx.var
     def get_selected_gh_date(self) -> str:
