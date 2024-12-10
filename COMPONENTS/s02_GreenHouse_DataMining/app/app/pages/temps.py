@@ -4,7 +4,6 @@ from app.views.navbar import navbar
 from app.views.footer import footer
 from app.backend.data_query import DataQueryGH
 import plotly.express as px
-import reflex as rx
 # Crear un DataFrame con los datos
 import pandas as pd
 
