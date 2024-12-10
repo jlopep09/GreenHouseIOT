@@ -13,5 +13,5 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 COPY ./app /code/app
 
-#CMD ["reflex", "run", "--loglevel", "debug"]
-CMD ["reflex", "run"]
+CMD ["reflex", "run", "--loglevel", "debug"]
+#CMD ["reflex", "run"]
