@@ -1,4 +1,7 @@
 import reflex as rx
+import asyncio
+
+import requests
 from app.backend.data_query import DataQueryGH
 from app.components.card_img import get_img_elem
 from enum import Enum
@@ -60,6 +63,26 @@ def content_card_options() -> rx.Component:
         spacing="0",
         )
 
+class SendConfigState(DataQueryGH):
+    api_text: str = ""
+    @rx.event
+    def send_time_data(self, form_data: dict):
+        try:
+            self.api_text = "Enviando datos..."
+            timer_on = form_data["timer_on"]
+            timer_off = form_data["timer_off"]
+            
+            send_url_on = "http://192.168.1.37/light/on/"
+            send_url_off = "http://192.168.1.37/light/off/"
+            
+            response = requests.post(send_url_on, data={"time": timer_on}, timeout=5)
+            response = requests.post(send_url_off, data={"time": timer_off}, timeout=5)
+
+            response.raise_for_status()  # Lanza un error si la respuesta tiene un código de estado de error
+            self.api_text = f"Las luces han sido programadas correctamente"
+        except Exception as exc:
+            self.api_text = f"Error al obtener los datos del formulario: {exc}"
+
 def get_division(img_url:str, variant: Variant, icon_1: str = "clock") -> rx.Component:
     return rx.hstack(
         rx.vstack(
@@ -106,47 +129,57 @@ def getDialog(variant = Variant) -> rx.Component:
                     size="2",
                     margin_bottom="16px",
                 ),
-                rx.flex(
-                    rx.text(
-                        "Hora de encendido",
-                        as_="div",
-                        size="2",
-                        margin_bottom="4px",
-                        weight="bold",
-                    ),
-                    rx.input(
-                        default_value="09:00",
-                        placeholder="Introduzca la hora de encendido deseada",
-                    ),
-                    rx.text(
-                        "Hora de apagado",
-                        as_="div",
-                        size="2",
-                        margin_bottom="4px",
-                        weight="bold",
-                    ),
-                    rx.input(
-                        default_value="20:00",
-                        placeholder="Introduzca la hora de apagado deseada",
-                    ),
-                    direction="column",
-                    spacing="3",
-                ),
-                rx.flex(
-                    rx.dialog.close(
-                        rx.button(
-                            "Cancel",
-                            color_scheme="gray",
-                            variant="soft",
+                rx.form(
+                    rx.flex(
+                        rx.text(
+                            "Hora de encendido",
+                            as_="div",
+                            size="2",
+                            margin_bottom="4px",
+                            weight="bold",
                         ),
+                        rx.input(
+                            default_value="09:00",
+                            placeholder="Introduzca la hora de encendido deseada",
+                            name = "timer_on"
+                        ),
+                        rx.text(
+                            "Hora de apagado",
+                            as_="div",
+                            size="2",
+                            margin_bottom="4px",
+                            weight="bold",
+                        ),
+                        rx.input(
+                            default_value="20:00",
+                            placeholder="Introduzca la hora de apagado deseada",
+                            name = "timer_off"
+                        ),
+                        rx.text(
+                            SendConfigState.api_text
+                        ),           
+                        rx.flex(
+                            rx.dialog.close(
+                                rx.button(
+                                    "Close",
+                                    color_scheme="gray",
+                                    variant="soft",
+                                ),
+                            ),
+                            
+                            rx.button("Save", type="submit"),
+                            
+                            spacing="3",
+                            margin_top="16px",
+                            justify="end"
+                        ),
+                        direction="column",
+                        spacing="3",
                     ),
-                    rx.dialog.close(
-                        rx.button("Save"),
-                    ),
-                    spacing="3",
-                    margin_top="16px",
-                    justify="end",
-                ),
+                    on_submit=SendConfigState.send_time_data,
+                    reset_on_submit=False,
+                )
+
             ),
         ),
         rx.dialog.root(
@@ -206,4 +239,14 @@ def getDialog(variant = Variant) -> rx.Component:
             ),
         ),       
     )
+
+def getSuccessPopup(texto: str)-> rx.Component:
+    return rx.toast.success(texto)
+
+def getErrorPopup(texto: str)-> rx.Component:
+    return rx.toast.error("Error:"+ texto)
+
+def getInfoPopup(texto: str)-> rx.Component:
+    return rx.toast.error(texto)
+
 

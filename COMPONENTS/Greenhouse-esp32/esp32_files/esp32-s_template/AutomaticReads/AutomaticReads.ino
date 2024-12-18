@@ -6,11 +6,12 @@
 #include <WiFiUdp.h>
 #include <TimeLib.h>
 
+
 //NETWORK CONFIG
-const char* ssid = "wifiName";
-const char* password = "pass";
-String serverName = "http://serverip:apiport/endpoint";
-String gh_name = "Invernadero-01";
+const char* ssid = "MOVISTAR_C4BF";
+const char* password = "77772EE1698861A4B165";
+String serverName = "http://192.168.1.44:8001/send/sensordata";
+String gh_name = "Invernadero-03";
 
 void connectToWiFi();
 void sendSensorData();

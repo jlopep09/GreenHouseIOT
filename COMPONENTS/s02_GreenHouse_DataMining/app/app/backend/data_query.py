@@ -60,6 +60,12 @@ class DataQueryGH(rx.State):
             if greenhouse.gh_id == self.selected_gh_index:
                 return greenhouse.date
         return "-"
+    @rx.var
+    def get_selected_gh_ip(self) -> str:
+        for greenhouse in self._greenhouses_list:
+            if greenhouse.gh_id == self.selected_gh_index:
+                return greenhouse.ip
+        return "-"
     
     def fetch_data(self):
         print("Intentando hacer fetch")
