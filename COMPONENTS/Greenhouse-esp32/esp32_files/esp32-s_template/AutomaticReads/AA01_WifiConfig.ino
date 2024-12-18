@@ -28,7 +28,7 @@ void endpointsSetup(){
       lightOnTime = request->getParam("time", true)->value();
       Serial.println("Las luces se encenderán a las: " + lightOnTime);
       automaticLights = true;
-      request->send(200, "text/plain", "Las luces se encenderán a las: " + lightOnTime);
+      request->send(200, "text/plain", "Encendido de luces programado a las: " + lightOnTime);
     }else if(request->hasParam("now", true)){
       Serial.println("Encendiendo luces...");
       automaticLights = false;
@@ -42,7 +42,7 @@ void endpointsSetup(){
       lightOffTime = request->getParam("time", true)->value();
       Serial.println("Las luces se apagarán a las: " + lightOffTime);
       automaticLights = true;
-      request->send(200, "text/plain", "Las luces se apagarán a las: " + lightOffTime);
+      request->send(200, "text/plain", "Apagado de luces programado a las: " + lightOffTime);
     }else if(request->hasParam("now", true)){
       Serial.println("Apagando luces...");
       automaticLights = false;
