@@ -7,10 +7,10 @@ def content_card_list() -> rx.Component:
     return rx.vstack(
             rx.separator(),
             rx.center(
-                    rx.text("Ordenar:"),
+                    rx.text("Ordenar por nombre:"),
                     filter_select_order(),
-                    rx.text("Localización:"),
-                    filter_select_lugar(),
+                    #rx.text("Localización:"),
+                    #filter_select_lugar(),
                     rx.button(rx.icon("refresh-ccw"), on_click=DataQueryGH.fetch_data, on_mount=DataQueryGH.fetch_data),
                     width = "100%",
                     padding_bottom = "0.5em",

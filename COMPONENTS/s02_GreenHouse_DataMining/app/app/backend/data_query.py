@@ -11,12 +11,27 @@ class DataQueryGH(rx.State):
     _greenhouses_list: rx.Field[List[Greenhouse]] =rx.field([])  # Atributo adicional para almacenar solo los nombres
     selected_gh_index: int = 0
     testint: int = 2
+    selected_city:str = "all"
+    @rx.event
+    def change_city_value(self, value: str):
+        self.selected_city = value
     @rx.var
     def is_gh_selected(self)->bool:
         return self.selected_gh_index!=0
     @rx.var
     def greenhouses_list(self) -> List[Greenhouse]:
         return self._greenhouses_list
+    @rx.var
+    def greenhouses_sorted_asc_list(self) -> List[Greenhouse]:
+        if self.selected_city == "all":
+            return sorted(self._greenhouses_list, key=lambda gh: gh.name.lower())
+        return []
+    @rx.var
+    def greenhouses_sorted_desc_list(self) -> List[Greenhouse]:
+        if self.selected_city == "all":
+            return sorted(self._greenhouses_list, key=lambda gh: gh.name.lower(), reverse=True)
+        return []
+    
     @rx.var
     def get_selected_gh_name(self) -> str:
         for greenhouse in self._greenhouses_list:
