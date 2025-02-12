@@ -6,8 +6,9 @@
 #include <WiFiUdp.h>
 #include <TimeLib.h>
 
-
-//NETWORK CONFIG
+/*
+  NETWORK CONFIG
+*/
 const char* ssid = "MOVISTAR_C4BF";
 const char* password = "77772EE1698861A4B165";
 String serverName = "http://192.168.1.44:8001/send/sensordata";
@@ -17,29 +18,37 @@ void connectToWiFi();
 void sendSensorData();
 bool checkLightActualStatus();
 void sensorsSetup();
-String generateWeb();
-void endpointsSetup();
+void startWeb();
 void lightHandler();
 bool getLightStatus();
 void sensorDataHandler();
 void syncTime();
+void setupTime();
 
 void setup() {
   Serial.begin(115200);
+
   connectToWiFi();
-  Serial.print("ESP32 IP address: "); Serial.println(WiFi.localIP());
+  if (WiFi.status() == WL_CONNECTED) {
+      Serial.print("ESP32 IP address: ");
+      Serial.println(WiFi.localIP());
+  } else {
+      Serial.println("Reconectando a WiFi...");
+  }
+  setupTime();
   sensorsSetup();
-  endpointsSetup();
+  startWeb();
 }
-
-
 
 
 void loop() {
   if (WiFi.status() == WL_CONNECTED) {
-    syncTime();
-    lightHandler();
-    sensorDataHandler();
+    syncTime(); //Sincroniza el tiempo para los contadores utilizados en la aplicación
+    sensorDataHandler(); //Comprueba si es necesario realizar una nueva lectura
+    lightHandler(); //Comprueba si la configuración de luces es correcta respecto a la programada
+    //TODO pumpHandler() 
+    //TODO fanHandler()
+    //TODO cameraHandler()
   } else {
     Serial.println("Reconectando a WiFi...");
     connectToWiFi();
