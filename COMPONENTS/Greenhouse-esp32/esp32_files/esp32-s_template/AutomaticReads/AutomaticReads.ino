@@ -12,7 +12,12 @@
 const char* ssid = "MOVISTAR_C4BF";
 const char* password = "77772EE1698861A4B165";
 String serverName = "http://192.168.1.44:8001/send/sensordata";
-String gh_name = "Invernadero-03";
+String gh_name = "Invernadero-01";
+
+// Configuración de IP estática
+IPAddress local_IP(192, 168, 1, 201); // Cambia la IP según tu red local
+IPAddress gateway(192, 168, 1, 1);    // Puerta de enlace (usualmente el router)
+IPAddress subnet(255, 255, 255, 0);   // Máscara de subred
 
 void connectToWiFi();
 void sendSensorData();
@@ -27,7 +32,10 @@ void setupTime();
 
 void setup() {
   Serial.begin(115200);
-
+  // Establecer la IP estática antes de conectar
+  if (!WiFi.config(local_IP, gateway, subnet)) {
+    Serial.println("Configuración de IP estática fallida");
+  }
   connectToWiFi();
   if (WiFi.status() == WL_CONNECTED) {
       Serial.print("ESP32 IP address: ");

@@ -7,10 +7,10 @@
 #include <TimeLib.h>
 
 //INPUT PIN
-#define PHOTO_PIN 32
-#define WATER_PIN 34
-#define MOIST_PIN 35
-#define DHTPIN 19 
+#define PHOTO_PIN 5
+#define WATER_PIN 6
+#define TDS_PIN 7
+#define DHTPIN 4 
 
 //OUTPUT PIN
 #define WATERPOWERPIN 33
@@ -29,8 +29,6 @@ unsigned long sendInterval = 30000; // Intervalo de envío en milisegundos (30 s
 void sensorsSetup(){
   //---------PINS AND SENSOR------------
   dht.begin();
-  pinMode(WATERPOWERPIN, OUTPUT);
-  digitalWrite(WATERPOWERPIN, LOW);
 
 }
 
@@ -58,12 +56,13 @@ void sendSensorData(){
     float temperature = dht.readTemperature();
     float humidity = dht.readHumidity();
     int lightLevel = analogRead(PHOTO_PIN);
-    int moist = analogRead(MOIST_PIN);
+    //int tds = analogRead(TDS_PIN);
+    int tds = 0;
     String gh_ip = WiFi.localIP().toString();
 
-    digitalWrite(WATERPOWERPIN, HIGH);
+
     int waterlevel = analogRead(WATER_PIN);
-    digitalWrite(WATERPOWERPIN, LOW);
+ 
 
     if (isnan(temperature) || isnan(humidity)) {
       Serial.println("Error al leer el sensor DHT22");
@@ -76,7 +75,7 @@ void sendSensorData(){
                       "\", \"temperature\": " + String(temperature) + 
                       ", \"humidity\": " + String(humidity) + 
                       ", \"water_level\": " + String(waterlevel) + 
-                      ", \"moist\": " + String(moist) +
+                      ", \"moist\": " + String(tds) +
                       ", \"light_level\": " + String(lightLevel) + "}";
 
     // Inicia la conexión al endpoint FastAPI
