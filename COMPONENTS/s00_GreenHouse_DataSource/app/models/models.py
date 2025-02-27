@@ -5,6 +5,7 @@ class SensorData(BaseModel):
     humidity: float
     light_level: int
     water_level: int
-    moist: int
+    tds: int
+    water_temperature: float
     gh_name: str
     gh_ip: str
