@@ -43,17 +43,21 @@ void setup() {
   } else {
       Serial.println("Reconectando a WiFi...");
   }
+  Serial.println("Estableciendo configuracion horaria");
   setupTime();
+  Serial.println("Inicializando los sensores");
   sensorsSetup();
+  Serial.println("Iniciando servidor web");
   startWeb();
+  Serial.println("Configuraciones establecidas correctamente");
 }
 
 
 void loop() {
   if (WiFi.status() == WL_CONNECTED) {
     syncTime(); //Sincroniza el tiempo para los contadores utilizados en la aplicación
-    sensorDataHandler(); //Comprueba si es necesario realizar una nueva lectura
-    lightHandler(); //Comprueba si la configuración de luces es correcta respecto a la programada
+    //sensorDataHandler(); //Comprueba si es necesario realizar una nueva lectura
+    //lightHandler(); //Comprueba si la configuración de luces es correcta respecto a la programada
     //TODO pumpHandler() 
     //TODO fanHandler()
     //TODO cameraHandler()

@@ -7,7 +7,7 @@
 #include <TimeLib.h>
 
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", 3600, 60000); // Sincronización con UTC
+NTPClient timeClient = NTPClient(ntpUDP, "europe.pool.ntp.org", 3600, 60000); // Sincronización con UTC
 
 void setupTime(){
   timeClient.begin();
