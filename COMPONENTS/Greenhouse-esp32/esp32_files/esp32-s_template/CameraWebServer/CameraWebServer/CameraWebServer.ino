@@ -9,6 +9,10 @@
 // ===========================
 const char* ssid = "MOVISTAR_C4BF";
 const char* password = "77772EE1698861A4B165";
+// Configuración de IP estática
+IPAddress local_IP(192, 168, 1, 202); // Cambia la IP según tu red local
+IPAddress gateway(192, 168, 1, 1);    // Puerta de enlace (usualmente el router)
+IPAddress subnet(255, 255, 255, 0);   // Máscara de subred
 
 void startCameraServer();
 void setupLedFlash(int pin);
@@ -16,6 +20,9 @@ void setupCamera();
 
 void setup() {
   Serial.begin(115200);
+  if(!WiFi.config(local_IP, gateway, subnet)) {
+    Serial.println("Configuración de IP estática fallida");
+  }
   Serial.setDebugOutput(true);
   Serial.println();
 

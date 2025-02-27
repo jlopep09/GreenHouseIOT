@@ -1,17 +1,12 @@
-FROM python:3.13 AS builder
+FROM node:22.14.0-alpine
+WORKDIR /app
 
+COPY package*.json ./
+RUN npm install
+RUN npm install -g npm@10.9.2
+RUN npm audit fix
 
-WORKDIR /code/app
+COPY . .
+EXPOSE 5173
 
-
-COPY ./requirements.txt /code/requirements.txt
-
-
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir --upgrade -r /code/requirements.txt
-
-
-COPY ./app /code/app
-
-CMD ["reflex", "run", "--loglevel", "debug"]
-#CMD ["reflex", "run"]
+CMD ["npm", "run", "dev"]

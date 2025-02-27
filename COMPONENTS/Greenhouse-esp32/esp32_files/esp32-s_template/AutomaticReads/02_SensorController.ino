@@ -2,15 +2,17 @@
 #include <HTTPClient.h>
 #include <DHT.h>
 #include <ESPAsyncWebServer.h> 
+#include <TimeLib.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
-#include <TimeLib.h>
+
+
 
 //INPUT PIN
-#define PHOTO_PIN 32
-#define WATER_PIN 34
-#define MOIST_PIN 35
-#define DHTPIN 19 
+#define PHOTO_PIN 5
+#define WATER_PIN 6
+#define TDS_PIN 7
+#define DHTPIN 4 
 
 //OUTPUT PIN
 #define WATERPOWERPIN 33
@@ -18,6 +20,8 @@
 //EXTRA DHT CONFIG
 #define DHTTYPE DHT22    
 DHT dht(DHTPIN, DHTTYPE);
+
+extern NTPClient timeClient;
 
 //TIME CONFIG
 unsigned long previousMillis = 0; // Almacena el tiempo del último envío
@@ -29,8 +33,6 @@ unsigned long sendInterval = 30000; // Intervalo de envío en milisegundos (30 s
 void sensorsSetup(){
   //---------PINS AND SENSOR------------
   dht.begin();
-  pinMode(WATERPOWERPIN, OUTPUT);
-  digitalWrite(WATERPOWERPIN, LOW);
 
 }
 
@@ -58,12 +60,14 @@ void sendSensorData(){
     float temperature = dht.readTemperature();
     float humidity = dht.readHumidity();
     int lightLevel = analogRead(PHOTO_PIN);
-    int moist = analogRead(MOIST_PIN);
+    //int tds = analogRead(TDS_PIN);
+    int tds = 0;
+    int water_temp = 0;
     String gh_ip = WiFi.localIP().toString();
 
-    digitalWrite(WATERPOWERPIN, HIGH);
+
     int waterlevel = analogRead(WATER_PIN);
-    digitalWrite(WATERPOWERPIN, LOW);
+ 
 
     if (isnan(temperature) || isnan(humidity)) {
       Serial.println("Error al leer el sensor DHT22");
@@ -76,7 +80,8 @@ void sendSensorData(){
                       "\", \"temperature\": " + String(temperature) + 
                       ", \"humidity\": " + String(humidity) + 
                       ", \"water_level\": " + String(waterlevel) + 
-                      ", \"moist\": " + String(moist) +
+                      ", \"tds\": " + String(tds) +
+                      ", \"water_temperature\": " + String(water_temp) +
                       ", \"light_level\": " + String(lightLevel) + "}";
 
     // Inicia la conexión al endpoint FastAPI
@@ -93,4 +98,28 @@ void sendSensorData(){
       Serial.println("Error en la solicitud: " + String(httpResponseCode));
     }
     http.end();
+}
+void getSensorData(String& jsonData) {
+    float temperature = dht.readTemperature();
+    float humidity = dht.readHumidity();
+    int lightLevel = analogRead(PHOTO_PIN);
+    int waterLevel = analogRead(WATER_PIN);
+    int tds = 0; // Cambiar si se activa la lectura de TDS
+    int water_temp = 0;
+    String gh_ip = WiFi.localIP().toString();
+    if (isnan(temperature) || isnan(humidity)) {
+        Serial.println("Error al leer el sensor DHT22");
+        jsonData = "{\"error\": \"Failed to read DHT22 sensor\"}";
+        return;
+    }
+
+    // Crear el JSON con los datos
+    jsonData = "{\"gh_name\": \"" + String(gh_name) + 
+              "\", \"gh_ip\": \"" + gh_ip + 
+              "\", \"temperature\": " + String(temperature) + 
+              ", \"humidity\": " + String(humidity) + 
+              ", \"water_level\": " + String(waterLevel) + 
+              ", \"tds\": " + String(tds) +
+              ", \"water_temperature\": " + String(water_temp) +
+              ", \"light_level\": " + String(lightLevel) + "}";
 }

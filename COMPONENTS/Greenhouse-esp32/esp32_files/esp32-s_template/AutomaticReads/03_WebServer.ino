@@ -6,8 +6,13 @@
 #include <WiFiUdp.h>
 #include <TimeLib.h>
 
+extern bool lightStatus; // Estado actual de las luces
+extern bool automaticLights;
+extern String lightOnTime; // Hora por defecto para encender. Debe tener los 4 digitos. SI -> 09:00, NO -> 9:00
+extern String lightOffTime;
 //WEB SERVER
 AsyncWebServer server(80); 
+void getSensorData(String& jsonData);
 
 void startWeb(){
   endpointsSetup();
@@ -88,11 +93,21 @@ String generateWeb() {
          "</html>";
 }
 void endpointsSetup(){
+  Serial.println("Iniciando endpoints");
   server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) { 
 	  Serial.println("ESP32 Web Server: New request received:");  // for debugging 
 	  Serial.println("GET /");        // for debugging 
 	  request->send(200, "text/html", generateWeb());}); 
      // Define a POST route to receive the light time
+
+  server.on("/read", HTTP_GET, [](AsyncWebServerRequest* request) { 
+      Serial.println("ESP32 Web Server: GET /read request received");  
+
+      String jsonResponse;
+      getSensorData(jsonResponse); // Llama a la función y obtiene los datos en JSON
+
+      request->send(200, "application/json", jsonResponse); // Responde con JSON
+  });
   server.on("/light/on/", HTTP_POST, [](AsyncWebServerRequest* request) {
     if (request->hasParam("time", true)) {
       lightOnTime = request->getParam("time", true)->value();
@@ -156,6 +171,7 @@ void endpointsSetup(){
     }
   });
 
-	 // Start the server 
+	 // Start the server
+   Serial.println("Iniciando servidor");
 	 server.begin(); 
 }

@@ -1,10 +1,11 @@
 from pydantic import BaseModel
 
 class SensorData(BaseModel):
-    temperature: float
+    tds: int
     humidity: float
-    light_level: int
     water_level: int
-    moist: int
+    temperature: float
+    light_level: int
+    water_temperature: float
     gh_name: str
     gh_ip: str

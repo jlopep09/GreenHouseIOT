@@ -151,4 +151,21 @@ José Antonio López Pérez - jose.lppz03@gmail.com
 
 
 
+<!-- CONTACT -->
+## Posibles errores y su solución
+
+Cuando se modifican las dependencias o en caso de nueva instalación es posible que se produzca un error con las dependencias de node, en caso de suceder se recomienda: 
+
+ 1- Pausar los contenedores, eliminar los contenedores, volumenes e imagenes asociadas
+
+ 2- Eliminar del proyecto la carpeta de node-modules y package-lock.json
+
+ 3- En local ejecutar npm install desde la raiz del componente vite
+
+ 4- Volver a iniciar los contenedores como se indica en la guia de inicio rapido
+
+<p align="right">(<a href="#readme-top">Volver al índice</a>)</p>
+
+
+
 [product-screenshot]: images/screenshot.png

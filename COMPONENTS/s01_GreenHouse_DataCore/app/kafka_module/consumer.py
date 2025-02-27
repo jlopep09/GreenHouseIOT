@@ -39,7 +39,7 @@ async def consume_messages():
                         bool_light = "True"
                     db_result = get_greenhouse_info_by_name(data["gh_name"])
                     gh_id_db = db_result["result"][0]["id"]
-                    create_read(moist=data["moist"], temperature=data["temperature"], humidity=data["humidity"], light=bool_light, water_level=data["water_level"], gh_id=int(gh_id_db))
+                    create_read(tds=data["tds"], temperature=data["temperature"], humidity=data["humidity"], light_level=bool_light, water_level=data["water_level"],water_temperature=data["water_temperature"], gh_id=int(gh_id_db))
                     
 
         except Exception as e:

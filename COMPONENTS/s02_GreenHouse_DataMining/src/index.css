@@ -1,0 +1,4 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+    themes: nord --default, dracula --prefersdark, aqua, retro, valentine, cyberpunk, dark, light, forest, halloween, abyss;
+  }
