@@ -11,7 +11,7 @@ router = APIRouter(tags=["MariaDB"],prefix="/db")
 async def get_db_info():
     kf.consume_messages()
     return PlainTextResponse(processor.get_db_info())
-
+get_db_info()
 @router.get("/info")
 async def get_db_info():
     return PlainTextResponse(processor.get_db_info())

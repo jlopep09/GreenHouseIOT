@@ -163,15 +163,15 @@ def update_greenhouse_ip(name: str, ip: str):
             detail=f"Error updating greenhouse: {e}"
         )
 
-def create_read(moist: int, humidity: int, water_level: int, temperature: int, light: bool, gh_id:int):
+def create_read(tds: int, humidity: int, water_level: int, temperature: int, light_level: bool, water_temperature:float, gh_id:int):
     try:
         conn = connector.get_con()
         cur = conn.cursor()
         
         # Inserta un nuevo registro en la tabla `greenhouses`
         cur.execute(
-            "INSERT INTO sensor_reads (moist, humidity, water_level, temperature, light, gh_id) VALUES (?, ?, ?, ?, ?, ?)",
-            (get_percentage(moist,const.MOIST_MIN_RANGE, const.MOIST_MAX_RANGE ), humidity, get_percentage(water_level, const.WATER_MIN_RANGE, const.WATER_MAX_RANGE), temperature, light, gh_id)
+            "INSERT INTO sensor_reads (tds, humidity, water_level, temperature, light_level, water_temperature, gh_id) VALUES (?, ?, ?, ?, ?, ?,?)",
+            (tds, humidity, get_percentage(water_level, const.WATER_MIN_RANGE, const.WATER_MAX_RANGE), temperature, light_level,water_temperature, gh_id)
         )
         
         # Confirma los cambios

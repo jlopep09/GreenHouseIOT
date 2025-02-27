@@ -2,11 +2,12 @@ from typing import Optional
 from pydantic import BaseModel
 
 class DataEntry(BaseModel):
-    moist: int
-    humidity: int
+    tds: int
+    humidity: float
     water_level: int
-    temperature: int
-    light: bool
+    temperature: float
+    light_level: int
+    water_temperature: float
 
 class GreenhouseRequest(BaseModel):
     date: str
