@@ -1,8 +1,32 @@
+from sqlite3 import Binary
 import controllers.db.connector as connector
 import mariadb
 from fastapi import HTTPException, status
 from numpy import interp
 import const
+
+def create_img(image: bytes):
+    try:
+        conn = connector.get_con()
+        cur = conn.cursor()
+
+        # Inserta solo la imagen en la base de datos
+        cur.execute(
+            "INSERT INTO images (image) VALUES (%s)",
+            (image,)  # ✅ Asegurar que es una tupla (con la coma final)
+        )
+
+        conn.commit()
+        img_id = cur.lastrowid
+
+        conn.close()
+
+        return {"message": "Image saved successfully", "id": img_id}
+
+    except mariadb.Error as e:
+        print(f"Error de MariaDB: {e}")  # Para depuración
+        raise HTTPException(status_code=500, detail=f"Error saving image: {str(e)}")
+
 
 def get_greenhouse_by_name(name: str):
     ghs = []

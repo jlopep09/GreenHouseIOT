@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, File, UploadFile
 import controllers.processor as processor
 from fastapi.responses import PlainTextResponse
 from models.data_model import GreenhouseRequest
@@ -40,7 +40,15 @@ async def create_greenhouse(greenhouse: GreenhouseRequest):
         ip=greenhouse.ip
     )
     return response
+@router.post("/img")
+async def post_img(image: UploadFile = File(...)):
+    # Obtener el archivo de imagen y convertirlo en bytes
+    image_bytes = await image.read()
 
+    # Llamar a la función de db_queries para guardar la imagen en la base de datos
+    response = db_queries.create_img(image=image_bytes)
+
+    return response
 
 @router.get("/reads/{id}")
 async def get_reads_from_greenhouse_id(id: int):
