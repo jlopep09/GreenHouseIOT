@@ -9,14 +9,14 @@ export const ThemeButton = () => {
         </div>
         <ul className="dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-2xl">
             <ThemeItem theme={"default"} label={"Default"}/>
+            <ThemeItem theme={"light"} label={"Light"}/>
+            <ThemeItem theme={"dark"} label={"Dark"}/>
             <ThemeItem theme={"retro"} label={"Retro"}/>
             <ThemeItem theme={"cyberpunk"} label={"Cyberpunk"}/>
             <ThemeItem theme={"valentine"} label={"Valentine"}/>
             <ThemeItem theme={"aqua"} label={"Aqua"}/>
-            <ThemeItem theme={"dark"} label={"Dark"}/>
-            <ThemeItem theme={"light"} label={"Light"}/>
             <ThemeItem theme={"halloween"} label={"Halloween"}/>
-            <ThemeItem theme={"forest"} label={"Forest"}/>
+            <ThemeItem theme={"dracula"} label={"Dracula"}/>
             <ThemeItem theme={"abyss"} label={"Abyss"}/>
         </ul>
     </div>
