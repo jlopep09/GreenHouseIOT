@@ -36,10 +36,10 @@ CREATE TABLE IF NOT EXISTS `greenhouses` (
 -- Volcando estructura para tabla db_greenhouse.images
 CREATE TABLE IF NOT EXISTS `images` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `image` mediumblob NOT NULL,
+  `image` blob NOT NULL,
   `label` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_spanish_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_spanish_ai_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `sensor_reads` (
   `gh_id` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `gh_id` (`gh_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1506 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1717 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- La exportación de datos fue deseleccionada.
 
