@@ -1,6 +1,10 @@
 import Navbar from '../overlay/Navbar';
 import Devicebar from '../overlay/Devicebar';
 import Sidebar from '../overlay/Sidebar';
+import Donut from '../charts/Donut';
+import Barchart from '../charts/Barchart';
+import Linechart from '../charts/Linechart';
+
 
 export default function Params() {
     
@@ -12,9 +16,16 @@ export default function Params() {
                     {/* Page content here */}
                     <Navbar/>
                     <Devicebar/>
+                    <section className='card bg-base-200 flex flex-row gap-4 justify-center'>
+                        <Donut></Donut>
+                        <Barchart></Barchart>
+                        <Linechart></Linechart>
+                    </section>
+
                 </div>
                 <Sidebar/>
             </div>
         </>
     );
 }
+
