@@ -1,9 +1,20 @@
 {
-    "$schema": "https://railway.app/railway.schema.json",
-    "build": {
-      "builder": "NIXPACKS"
-    },
-    "deploy": {
-      "startCommand": "hypercorn app.main:app --bind \"[::]:$PORT\""
+"$schema": "https://schema.up.railway.app/railway.schema.json",
+"build": {
+    "builder": "NIXPACKS",
+    "nixpacksPlan": {
+    "providers": ["python"],
+    "phases": {
+        "setup": {
+        "nixPkgs": ["python3", "pip"]
+        }
     }
-  }
+    }
+},
+"deploy": {
+    "startCommand": "hypercorn app.main:app --bind \"[::]:$PORT\"",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+}
+}
+  
