@@ -1,8 +1,9 @@
-fastapi[all]
-hypercorn
+fastapi==0.100.0
+hypercorn==0.14.4
 requests
 pydantic
 pandas
 mariadb
 kafka-python
 numpy
+
