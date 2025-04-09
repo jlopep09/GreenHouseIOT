@@ -1,5 +1,5 @@
 from sqlite3 import Binary
-import controllers.db.connector as connector
+import app.controllers.db.connector as connector
 import mariadb
 from fastapi import HTTPException, status
 from numpy import interp

@@ -1,8 +1,8 @@
 from fastapi import APIRouter, File, UploadFile
-import controllers.processor as processor
+import app.controllers.processor as processor
 from fastapi.responses import PlainTextResponse
-from models.data_model import GreenhouseRequest
-import controllers.db.db_queries as db_queries
+from app.models.data_model import GreenhouseRequest
+import app.controllers.db.db_queries as db_queries
 '''
 import kafka_module.consumer as kf
 '''

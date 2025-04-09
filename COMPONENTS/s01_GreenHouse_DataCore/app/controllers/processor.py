@@ -1,5 +1,5 @@
-import controllers.db.connector as connector
-import controllers.db.db_queries as db_queries
+import app.controllers.db.connector as connector
+import app.controllers.db.db_queries as db_queries
 
 
 def get_db_info():
