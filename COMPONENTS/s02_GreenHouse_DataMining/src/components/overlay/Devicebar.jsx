@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowSVG } from '../Buttons/ThemeButton';
 import AddNewGH from '../Buttons/AddNewGH';
+import { ddbbApiIp } from '../../../constants';
+
 
 export default function Devicebar() {
     const [greenhouses, setGreenhouses] = useState([]);
@@ -8,7 +10,7 @@ export default function Devicebar() {
 
     const fetchGreenhouses = async () => {
         try {
-            const response = await fetch('http://localhost:8002/db/gh/');
+            const response = await fetch(ddbbApiIp + '/db/gh/');
             const data = await response.json();
             if (data.greenhouses.length > 0) {
                 setGreenhouses(data.greenhouses);

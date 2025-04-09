@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { ddbbApiIp } from '../../../constants';
 
-const API_URL = 'http://localhost:8002/db/reads/';
+const API_URL = ddbbApiIp + '/db/reads/';
 
 export const Content = () => {
     const [latestRead, setLatestRead] = useState(null);
