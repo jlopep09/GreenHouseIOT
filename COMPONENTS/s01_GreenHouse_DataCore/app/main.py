@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
-from routers.db_router import router as db_router
+from app.routers.db_router import router as db_router
 from fastapi.middleware.cors import CORSMiddleware
 
 """import kafka_module.consumer as kf"""
