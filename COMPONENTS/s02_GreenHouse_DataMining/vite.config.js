@@ -8,8 +8,15 @@ export default defineConfig({
   server: {
     host: true, 
     port: 80,
-    watch:{
+    allowedHosts: [
+      'greenhouseiot-production.up.railway.app',  // Agregar dominio permitido
+      'localhost',  // Permitir acceso desde localhost
+      'greenhouse.joselp.com',    
+    ],
+    watch: {
       usePolling: true,
     },
   },
 });
+
+
