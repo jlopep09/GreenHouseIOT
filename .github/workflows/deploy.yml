@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy Frontend to Railway
 
 on:
   push:
@@ -25,5 +25,11 @@ jobs:
       - name: Build the project
         working-directory: COMPONENTS/s02_GreenHouse_DataMining
         run: npm run build
+      
+      - name: Deploy to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        working-directory: COMPONENTS/s02_GreenHouse_DataMining
+        run: railway up --frontend
 
 
