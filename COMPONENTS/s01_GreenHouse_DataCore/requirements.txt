@@ -7,3 +7,4 @@ mariadb
 kafka-python
 numpy
 python-dotenv
+python-multipart
