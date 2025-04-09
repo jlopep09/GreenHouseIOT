@@ -13,4 +13,4 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 COPY ./app /code/app
 
-CMD ["fastapi", "run", "./app/main.py", "--port", "8002"]
+CMD ["hypercorn", "app.main:app", "--bind", "0.0.0.0:8002"]
