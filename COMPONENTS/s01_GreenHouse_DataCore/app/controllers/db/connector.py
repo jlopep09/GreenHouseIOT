@@ -1,20 +1,24 @@
 import mariadb
-import sys
 from fastapi import HTTPException, status
+import os
 
 def get_con():
     try:
+        from dotenv import load_dotenv
+        load_dotenv()
         conn = mariadb.connect(
-            user="root",
-            password="123456",
-            host="mariadb",
-            port=3306,
-            database="db_greenhouse"
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            host=os.getenv("DB_HOST"),
+            port=int(os.getenv("DB_PORT", 3306)),
+            database=os.getenv("DB_NAME")
         )
         return conn
     except mariadb.Error as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Error connecting to MariaDB Platform: {e}")
-
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Error connecting to MariaDB Platform: {e}"
+        )
 
 def db_info():
     # Query to get tables and columns

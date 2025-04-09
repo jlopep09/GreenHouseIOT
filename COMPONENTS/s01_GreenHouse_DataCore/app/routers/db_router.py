@@ -3,15 +3,18 @@ import controllers.processor as processor
 from fastapi.responses import PlainTextResponse
 from models.data_model import GreenhouseRequest
 import controllers.db.db_queries as db_queries
+'''
 import kafka_module.consumer as kf
-
+'''
 
 router = APIRouter(tags=["MariaDB"],prefix="/db")
+'''
 @router.get("/initkafka")
 async def get_db_info():
     kf.consume_messages()
     return PlainTextResponse(processor.get_db_info())
-get_db_info()
+'''
+
 @router.get("/info")
 async def get_db_info():
     return PlainTextResponse(processor.get_db_info())

@@ -6,4 +6,4 @@ pandas
 mariadb
 kafka-python
 numpy
-
+python-dotenv

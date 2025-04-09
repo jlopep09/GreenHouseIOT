@@ -1,27 +1,19 @@
-"""import asyncio"""
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
-"""
 from routers.db_router import router as db_router
-"""
 from fastapi.middleware.cors import CORSMiddleware
+
 """import kafka_module.consumer as kf"""
 
 
 
-origins = [
-    "http://web:3000",
-    "http://web:8000",
-]
-
 app = FastAPI()
-
-"""
 app.include_router(db_router)
-"""
+
 @app.get("/")
 async def get_root():
     return PlainTextResponse("Hello, its working")
+
 """@app.on_event("startup")
 async def startup_event():
     print(f"Conectando a Kafka en kafka:9092...")
