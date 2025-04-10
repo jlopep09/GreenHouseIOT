@@ -18,11 +18,11 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-          
+
       - name: Copy files to VPS
         run: |
           ssh -o StrictHostKeyChecking=no jlopep09@vps.joselp.com "git -C /home/jlopep09/repository/GreenHouseIOT pull || git clone https://github.com/your_user/your_repo.git /home/jlopep09/repository/GreenHouseIOT"
       
       - name: Deploy using Docker Compose
         run: |
-          ssh -o StrictHostKeyChecking=no jlopep09@vps.joselp.com "cd /home/jlopep09/repository/GreenHouseIOT && docker-compose pull && docker compose --profile all up --build"
+          ssh -o StrictHostKeyChecking=no jlopep09@vps.joselp.com "cd /home/jlopep09/repository/GreenHouseIOT && docker compose pull && docker compose --profile all up --build"
