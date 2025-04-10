@@ -13,8 +13,8 @@ import ProtectedRoute from './components/views/ProtectedRoute.jsx'
 createRoot(document.getElementById('root')).render(
       <BrowserRouter>
         <Auth0Provider
-          domain={import.meta.env.VITE_AUTH0_DOMAIN}
-          clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
+            domain="dev-tzc8kzolfvbuc2la.us.auth0.com"
+            clientId="uiGcjLMNvMelgABnjD59quwYLnPz5DCm"
           authorizationParams={{
             redirect_uri: window.location.origin
           }}
