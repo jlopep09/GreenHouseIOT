@@ -6,6 +6,10 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
+    https: {
+      key: fs.readFileSync('/etc/letsencrypt/live/vps.joselp.com/privkey.pem'),
+      cert: fs.readFileSync('/etc/letsencrypt/live/vps.joselp.com/fullchain.pem'),
+    },
     host: true, 
     port: 80,
     allowedHosts: [
