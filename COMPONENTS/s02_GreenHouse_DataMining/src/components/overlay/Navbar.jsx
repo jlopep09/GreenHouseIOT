@@ -1,6 +1,7 @@
 import React from 'react'
 import { ThemeButton } from '../Buttons/ThemeButton'
 import { appName } from '../../../constants'
+import LogoutButton from '../accounts/LogoutButton'
 
 
 export default function Navbar() {
@@ -15,6 +16,7 @@ export default function Navbar() {
                     <a className="btn btn-ghost text-xl">{appName}</a>
                 </h1>
                 <nav className="navbar-end">
+                    <LogoutButton></LogoutButton>
                     <SearchIcon/>
                     <ThemeButton/>
                     <NotificationMenu/>
