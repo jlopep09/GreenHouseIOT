@@ -57,7 +57,7 @@ services:
     networks:
       - red_local_compartida
     ports:
-      - "443:443"
+      - "80:5173"
     restart: "no"
     volumes:
       - ./COMPONENTS/s02_GreenHouse_DataMining:/app
