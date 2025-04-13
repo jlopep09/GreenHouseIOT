@@ -17,7 +17,7 @@ def get_con():
     except mariadb.Error as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Error connecting to MariaDB Platform: {e}. Check db url host:{os.getenv("DB_HOST")}"
+            detail = f"Error connecting to MariaDB Platform: {e}. Check db url host:{os.getenv('DB_HOST')}"
         )
 
 def db_info():
