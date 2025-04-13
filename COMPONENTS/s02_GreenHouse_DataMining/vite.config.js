@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     host: true, 
-    port: 80,
+    port: 443,
     allowedHosts: [
       'greenhouseiot-production.up.railway.app',  // Agregar dominio permitido
       'localhost',  // Permitir acceso desde localhost
