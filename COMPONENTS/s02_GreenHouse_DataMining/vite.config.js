@@ -17,6 +17,7 @@ export default defineConfig({
     watch: {
       usePolling: true,
     },
+    https: false,
   },
 });
 
