@@ -6,6 +6,11 @@ def get_con():
     try:
         from dotenv import load_dotenv
         load_dotenv()
+        print("USER:", os.getenv("DB_USER"))
+        print("PASSWORD:", os.getenv("DB_PASSWORD"))
+        print("HOST:", os.getenv("DB_HOST"))
+        print("PORT:", os.getenv("DB_PORT"))
+        print("DATABASE:", os.getenv("DB_NAME"))
         conn = mariadb.connect(
             user=os.getenv("DB_USER"),
             password=os.getenv("DB_PASSWORD"),
