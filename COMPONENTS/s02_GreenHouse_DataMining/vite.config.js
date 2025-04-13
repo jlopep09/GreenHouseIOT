@@ -11,7 +11,8 @@ export default defineConfig({
     allowedHosts: [
       'greenhouseiot-production.up.railway.app',  // Agregar dominio permitido
       'localhost',  // Permitir acceso desde localhost
-      'greenhouse.joselp.com',    
+      'greenhouse.joselp.com',  
+      "vps.joselp.com",  
     ],
     watch: {
       usePolling: true,
