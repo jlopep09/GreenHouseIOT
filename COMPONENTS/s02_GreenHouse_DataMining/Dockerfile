@@ -7,6 +7,6 @@ RUN npm install -g npm@10.9.2
 RUN npm audit fix
 
 COPY . .
-EXPOSE 80
+EXPOSE 443
 
 CMD ["npm", "run", "dev"]
