@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import PlainTextResponse
 from app.routers.db_router import router as db_router
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 """import kafka_module.consumer as kf"""
 
@@ -17,7 +18,7 @@ async def verify_authentication(request: Request, call_next):
     token = request.headers.get("Authorization")
     if not token or token != f"Bearer {SECRET_TOKEN}":
         detailText = "Forbidden porque me has dado un token: "+token+" y yo esperaba: Bearer "+SECRET_TOKEN
-        raise HTTPException(status_code=403, detail=detailText)
+        return JSONResponse(status_code=403, content={"detail": detailText})
 
     # Continuar con la solicitud si es válida
     response = await call_next(request)
