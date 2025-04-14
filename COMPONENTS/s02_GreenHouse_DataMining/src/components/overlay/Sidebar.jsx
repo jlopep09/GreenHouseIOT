@@ -1,5 +1,4 @@
 import React from 'react'
-import { appName } from '../../../constants'
 import { Link } from 'react-router'
 
 export default function Sidebar () {
@@ -10,7 +9,7 @@ export default function Sidebar () {
                 {/* Sidebar content here */}
                 <SidebarLinks/>
                 <div className='flex flex-col justify-end grow text-neutral'>
-                    <p className='ms-3 brightness-180'>© 2025 - {appName}</p>
+                    <p className='ms-3 brightness-180'>© 2025 - {import.meta.env.VITE_APP_NAME}</p>
                 </div>
                 
             </ul>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ddbbApiIp } from '../../../constants';
 
-const API_URL = ddbbApiIp + '/db/reads/';
+const API_URL = import.meta.env.VITE_DDBB_API_IP + '/db/reads/';
 
 export const Content = () => {
     const [latestRead, setLatestRead] = useState(null);
