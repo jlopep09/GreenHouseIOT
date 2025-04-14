@@ -45,11 +45,15 @@ function ImageCard() {
                 // Enviar la imagen al segundo endpoint
                 const formData = new FormData();
                 formData.append('image', imageBlob, 'image.jpg');
-                
-                const postResponse = await fetch('http://192.168.1.44:8002/db/img', {
-                    method: 'POST',
-                    body: formData,
-                });
+                const postResponse = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/img`,
+                    {
+                      method: 'POST',
+                      headers: {
+                        'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
+                      },
+                      body: formData,
+                    }
+                  );
 
                 if (!postResponse.ok) {
                     console.error('Error al enviar la imagen al servidor');

@@ -26,7 +26,14 @@ const Linechart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8002/db/reads/");
+        const response = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/reads/`,
+          {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
+            },
+          }
+        );
         const data = await response.json();
 
         if (data.reads) {

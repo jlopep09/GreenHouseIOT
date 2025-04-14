@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowSVG } from '../Buttons/ThemeButton';
 import AddNewGH from '../Buttons/AddNewGH';
-import { ddbbApiIp } from '../../../constants';
 
 
 export default function Devicebar() {
@@ -10,7 +9,14 @@ export default function Devicebar() {
 
     const fetchGreenhouses = async () => {
         try {
-            const response = await fetch(ddbbApiIp + '/db/gh/');
+            const response = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/gh/`,
+                {
+                  method: 'GET',
+                  headers: {
+                    'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
+                  },
+                }
+              );
             const data = await response.json();
             if (data.greenhouses.length > 0) {
                 setGreenhouses(data.greenhouses);
