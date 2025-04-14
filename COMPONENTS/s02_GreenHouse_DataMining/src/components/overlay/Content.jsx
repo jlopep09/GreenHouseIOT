@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-const API_URL = import.meta.env.VITE_DDBB_API_IP + '/db/reads/';
 
 export const Content = () => {
     const [latestRead, setLatestRead] = useState(null);
@@ -8,7 +7,14 @@ export const Content = () => {
     useEffect(() => {
         const fetchLatestRead = async () => {
             try {
-                const response = await fetch(API_URL);
+                const response = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/reads/`,
+                    {
+                      method: 'GET',
+                      headers: {
+                        'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
+                      },
+                    }
+                  );
                 const data = await response.json();
                 if (data.reads && data.reads.length > 0) {
                     const latest = data.reads.reduce((prev, current) => 

@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI/CD Pipeline for backend
 
 on:
   push:
@@ -39,9 +39,3 @@ jobs:
         push: true
         tags: jlopep09/greenhouse-backend:latest
 
-    - name: Build and push Docker image for web
-      uses: docker/build-push-action@v3
-      with:
-        context: ./COMPONENTS/s02_GreenHouse_DataMining/
-        push: true
-        tags: jlopep09/greenhouse-web:latest
