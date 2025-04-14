@@ -1,6 +1,5 @@
 import React from 'react'
 import { ThemeButton } from '../Buttons/ThemeButton'
-import { appName } from '../../../constants'
 import LogoutButton from '../accounts/LogoutButton'
 
 
@@ -13,7 +12,7 @@ export default function Navbar() {
                     <DrawerIcon/>
                 </nav>
                 <h1 className="navbar-center">
-                    <a className="btn btn-ghost text-xl">{appName}</a>
+                    <a className="btn btn-ghost text-xl">{import.meta.env.VITE_APP_NAME}</a>
                 </h1>
                 <nav className="navbar-end">
                     <LogoutButton></LogoutButton>
