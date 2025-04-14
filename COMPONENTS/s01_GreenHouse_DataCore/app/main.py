@@ -17,7 +17,7 @@ async def verify_authentication(request: Request, call_next):
     token = request.headers.get("Authorization")
     if not token or token != f"Bearer {SECRET_TOKEN}":
         detailText = "Forbidden porque me has dado un token: "+token+" y yo esperaba: Bearer "+SECRET_TOKEN
-        raise HTTPException(status_code=403, detail="Forbidden, me has dado un")
+        raise HTTPException(status_code=403, detail=detailText)
 
     # Continuar con la solicitud si es válida
     response = await call_next(request)
