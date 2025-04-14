@@ -2,28 +2,46 @@ import mariadb
 from fastapi import HTTPException, status
 import os
 
+import os
+from dotenv import load_dotenv
+from fastapi import HTTPException, status
+import mariadb
+
 def get_con():
     try:
-        from dotenv import load_dotenv
+        # Cargar variables de entorno
         load_dotenv()
-        print("USER:", os.getenv("DB_USER"))
-        print("PASSWORD:", os.getenv("DB_PASSWORD"))
-        print("HOST:", os.getenv("DB_HOST"))
-        print("PORT:", os.getenv("DB_PORT"))
-        print("DATABASE:", os.getenv("DB_NAME"))
+
+        # Comprobar si todas las variables necesarias existen
+        db_user = os.getenv("DB_USER")
+        db_password = os.getenv("DB_PASSWORD")
+        db_host = os.getenv("DB_HOST")
+        db_port = os.getenv("DB_PORT")
+        db_name = os.getenv("DB_NAME")
+
+        # Si alguna variable falta, lanzar un error HTTP con el mismo mensaje
+        if not all([db_user, db_password, db_host, db_port, db_name]):
+            raise HTTPException(
+                status_code=status.HTTP_412_PRECONDITION_FAILED,
+                detail="Missing one or more required environment variables"
+            )
+
+        # Establecer la conexión a la base de datos
         conn = mariadb.connect(
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD"),
-            host=os.getenv("DB_HOST"),
-            port=int(os.getenv("DB_PORT", 3306)),
-            database=os.getenv("DB_NAME")
+            user=db_user,
+            password=db_password,
+            host=db_host,
+            port=int(db_port or 3306),
+            database=db_name
         )
         return conn
+
     except mariadb.Error as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail = f"Error connecting to MariaDB Platform: {e}. Check db url host:{os.getenv('DB_HOST')}"
+            detail=f"Error connecting to MariaDB Platform: {e}"
         )
+
 
 def db_info():
     # Query to get tables and columns
