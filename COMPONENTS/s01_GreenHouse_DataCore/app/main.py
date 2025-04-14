@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 app.include_router(db_router)
 
-@app.get("/")
+@app.get("/health")
 async def get_root():
     return PlainTextResponse("Hello, its working")
 

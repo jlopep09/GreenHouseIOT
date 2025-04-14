@@ -7,7 +7,7 @@ import app.controllers.db.db_queries as db_queries
 import kafka_module.consumer as kf
 '''
 
-router = APIRouter(tags=["MariaDB"],prefix="/api/db")
+router = APIRouter(tags=["MariaDB"],prefix="/db")
 '''
 @router.get("/initkafka")
 async def get_db_info():
