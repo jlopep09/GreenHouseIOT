@@ -15,5 +15,7 @@ void setupTime(){
 }
 
 void syncTime(){
-  timeClient.update();
+  if (timeClient.update()) {
+    Serial.println("Hora actualizada.");
+  }
 }

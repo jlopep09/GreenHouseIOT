@@ -9,13 +9,12 @@
 
 
 //INPUT PIN
-#define PHOTO_PIN 5
-#define WATER_PIN 6
-#define TDS_PIN 7
-#define DHTPIN 4 
 
-//OUTPUT PIN
-#define WATERPOWERPIN 33
+#define TDS_PIN 4
+#define WATER_PIN 5
+#define WATER_TEMP_PIN 6
+#define DHTPIN 7
+#define PHOTO_PIN 15
 
 //EXTRA DHT CONFIG
 #define DHTTYPE DHT22    
@@ -59,18 +58,36 @@ void sendSensorData(){
 
     float temperature = dht.readTemperature();
     float humidity = dht.readHumidity();
-    int lightLevel = analogRead(PHOTO_PIN);
-    //int tds = analogRead(TDS_PIN);
-    int tds = 0;
-    int water_temp = 0;
-    String gh_ip = WiFi.localIP().toString();
 
+    int lightLevel = analogRead(PHOTO_PIN);
+
+    int tds = analogRead(TDS_PIN);
+
+    int water_temp = analogRead(WATER_TEMP_PIN);
 
     int waterlevel = analogRead(WATER_PIN);
- 
 
+    String gh_ip = WiFi.localIP().toString();
+
+   
     if (isnan(temperature) || isnan(humidity)) {
       Serial.println("Error al leer el sensor DHT22");
+      return;
+    }
+    if (isnan(lightLevel)) {
+      Serial.println("Error al leer el sensor de luz");
+      return;
+    }
+    if (isnan(tds)) {
+      Serial.println("Error al leer la electro-conductividad");
+      return;
+    }
+    if (isnan(water_temp)) {
+      Serial.println("Error al leer la temperatura de agua");
+      return;
+    }
+    if (isnan(waterlevel)) {
+      Serial.println("Error al leer el nivel de agua");
       return;
     }
 
@@ -83,7 +100,8 @@ void sendSensorData(){
                       ", \"tds\": " + String(tds) +
                       ", \"water_temperature\": " + String(water_temp) +
                       ", \"light_level\": " + String(lightLevel) + "}";
-
+    Serial.println("Enviando la siguiente informacion:");
+    Serial.println(postData);
     // Inicia la conexión al endpoint FastAPI
     http.begin(serverName);
     http.addHeader("Content-Type", "application/json");

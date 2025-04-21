@@ -1,16 +1,16 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
-#include <DHT.h>
-#include <ESPAsyncWebServer.h> 
-#include <NTPClient.h>
+#include <DHT.h>//adafruit v1.4.6
+#include <ESPAsyncWebServer.h> //ESP32 Async WebServer ESP32Async v3.7.6 and Async TCP v3.3.8
+#include <NTPClient.h>//Fabrice weinberg v3.2.1
 #include <WiFiUdp.h>
-#include <TimeLib.h>
+#include <TimeLib.h>//Michael margolis v1.6.1
 
 /*
   NETWORK CONFIG
 */
-const char* ssid = "MOVISTAR_C4BF";
-const char* password = "77772EE1698861A4B165";
+const char* ssid = "MOVISTAR_E080";
+const char* password = "sjPmdBHx8Q8LkzHByiCx";
 String serverName = "http://192.168.1.44:8001/send/sensordata";
 String gh_name = "Invernadero-01";
 
@@ -56,7 +56,7 @@ void setup() {
 void loop() {
   if (WiFi.status() == WL_CONNECTED) {
     syncTime(); //Sincroniza el tiempo para los contadores utilizados en la aplicación
-    //sensorDataHandler(); //Comprueba si es necesario realizar una nueva lectura
+    sensorDataHandler(); //Comprueba si es necesario realizar una nueva lectura
     //lightHandler(); //Comprueba si la configuración de luces es correcta respecto a la programada
     //TODO pumpHandler() 
     //TODO fanHandler()
