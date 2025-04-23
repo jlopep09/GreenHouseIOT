@@ -1,6 +1,6 @@
 
-from controllers.processor import get_greenhouse_info_by_name
-from controllers.db.db_queries import create_greenhouse, update_greenhouse_ip
+from app.controllers.processor import get_greenhouse_info_by_name
+from app.controllers.db.db_queries import create_greenhouse, update_greenhouse_ip
 #This class is used to auto detect gh ip changes to update the db
 
 class Detector():

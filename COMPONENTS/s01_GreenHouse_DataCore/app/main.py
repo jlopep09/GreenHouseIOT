@@ -6,7 +6,7 @@ from app.routers.db_router import router as db_router
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-import kafka_module.consumer as kf
+import app.kafka_module.consumer as kf
 
 SECRET_TOKEN = os.getenv("SECRET_TOKEN")
 

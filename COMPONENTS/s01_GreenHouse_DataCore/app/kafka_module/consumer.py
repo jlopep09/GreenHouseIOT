@@ -2,9 +2,9 @@ from kafka import KafkaConsumer
 import json
 import asyncio
 import time
-from controllers.db.db_queries import create_read
-from controllers.detector import Detector
-from controllers.processor import get_greenhouse_info_by_name
+from app.controllers.db.db_queries import create_read
+from app.controllers.detector import Detector
+from app.controllers.processor import get_greenhouse_info_by_name
 
 time.sleep(20)
 

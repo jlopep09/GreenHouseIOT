@@ -4,7 +4,7 @@ from fastapi.responses import PlainTextResponse
 from app.models.data_model import GreenhouseRequest
 import app.controllers.db.db_queries as db_queries
 
-import kafka_module.consumer as kf
+import app.kafka_module.consumer as kf
 
 
 router = APIRouter(tags=["MariaDB"],prefix="/db")
