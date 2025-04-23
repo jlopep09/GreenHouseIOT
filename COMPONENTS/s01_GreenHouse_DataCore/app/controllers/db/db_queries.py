@@ -3,7 +3,7 @@ import app.controllers.db.connector as connector
 import mariadb
 from fastapi import HTTPException, status
 from numpy import interp
-import app.const
+import const
 
 def create_img(image: bytes):
     try:
