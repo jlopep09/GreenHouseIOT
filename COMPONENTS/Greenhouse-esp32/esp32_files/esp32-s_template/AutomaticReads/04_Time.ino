@@ -7,15 +7,28 @@
 #include <TimeLib.h>
 
 WiFiUDP ntpUDP;
-NTPClient timeClient = NTPClient(ntpUDP, "europe.pool.ntp.org", 3600, 60000); // Sincronización con UTC
+NTPClient timeClient(ntpUDP);
+
 
 void setupTime(){
   timeClient.begin();
-  setTime(timeClient.getEpochTime()); 
+  timeClient.setTimeOffset(7200);
+  if (timeClient.forceUpdate()) {
+    Serial.println("Hora actualizada (force).");
+  } else {
+    Serial.println("No se ha podido actualizar la hora (force).");
+  }
 }
 
 void syncTime(){
   if (timeClient.update()) {
     Serial.println("Hora actualizada.");
   }
+}
+String obtenerHoraActual() {
+  return timeClient.getFormattedTime().substring(0, 5); // HH:MM
+}
+
+bool horaDentroDelRango(const String& hora, String StringHoraEncendido, String StringHoraApagado) {
+  return hora >= StringHoraEncendido && hora < StringHoraApagado;
 }

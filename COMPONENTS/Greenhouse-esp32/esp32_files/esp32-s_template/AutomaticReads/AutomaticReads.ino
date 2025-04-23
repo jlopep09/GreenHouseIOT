@@ -1,17 +1,30 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
-#include <DHT.h>//adafruit v1.4.6
-#include <ESPAsyncWebServer.h> //ESP32 Async WebServer ESP32Async v3.7.6 and Async TCP v3.3.8
-#include <NTPClient.h>//Fabrice weinberg v3.2.1
+#include <DHT.h>//DHT sensor library adafruit v1.4.6
+#include <ESPAsyncWebServer.h> //ESP32 Async WebServer ESP32Async v3.7.6 and Async TCP v3.3.8 ->v3.7.7 && v3.4.0
+#include <NTPClient.h>//NTPClient-Fabrice weinberg v3.2.1
 #include <WiFiUdp.h>
 #include <TimeLib.h>//Michael margolis v1.6.1
+//Adafruit unified sensor v 1.1.15
+
+//PIN SETUP
+
+int TDS_PIN = 4;
+int WATER_PIN = 5;
+int WATER_TEMP_PIN = 6;
+int DHTPIN = 7;
+int PHOTO_PIN = 15;
+
+int PIN_RELE_LUCES = 39;
+int PIN_RELE_OXIGENO = 40;
+int PIN_RELE_FAN = 41;
+int PIN_RELE_PUMP = 42;
 
 /*
   NETWORK CONFIG
 */
 const char* ssid = "MOVISTAR_E080";
 const char* password = "sjPmdBHx8Q8LkzHByiCx";
-String serverName = "http://192.168.1.44:8001/send/sensordata";
 String gh_name = "Invernadero-01";
 
 // Configuración de IP estática
@@ -20,15 +33,19 @@ IPAddress gateway(192, 168, 1, 1);    // Puerta de enlace (usualmente el router)
 IPAddress subnet(255, 255, 255, 0);   // Máscara de subred
 
 void connectToWiFi();
-void sendSensorData();
-bool checkLightActualStatus();
 void sensorsSetup();
+void lightSetup();
 void startWeb();
-void lightHandler();
-bool getLightStatus();
-void sensorDataHandler();
+void comprobarLuces();
+void oxigenSetup();
+void comprobarOxigeno();
 void syncTime();
 void setupTime();
+void fanSetup();
+void comprobarVentilador();
+void pumpSetup();
+void comprobarBomba();
+
 
 void setup() {
   Serial.begin(115200);
@@ -45,8 +62,12 @@ void setup() {
   }
   Serial.println("Estableciendo configuracion horaria");
   setupTime();
-  Serial.println("Inicializando los sensores");
+  Serial.println("Inicializando los sensores y otros dispositivos");
   sensorsSetup();
+  lightSetup();
+  oxigenSetup();
+  fanSetup();
+  pumpSetup();
   Serial.println("Iniciando servidor web");
   startWeb();
   Serial.println("Configuraciones establecidas correctamente");
@@ -56,11 +77,10 @@ void setup() {
 void loop() {
   if (WiFi.status() == WL_CONNECTED) {
     syncTime(); //Sincroniza el tiempo para los contadores utilizados en la aplicación
-    sensorDataHandler(); //Comprueba si es necesario realizar una nueva lectura
-    //lightHandler(); //Comprueba si la configuración de luces es correcta respecto a la programada
-    //TODO pumpHandler() 
-    //TODO fanHandler()
-    //TODO cameraHandler()
+    comprobarLuces(); //Comprueba si la configuración de luces es correcta respecto a la programada
+    comprobarOxigeno();
+    comprobarVentilador();
+    comprobarBomba();
   } else {
     Serial.println("Reconectando a WiFi...");
     connectToWiFi();
