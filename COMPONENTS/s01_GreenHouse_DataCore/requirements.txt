@@ -8,3 +8,4 @@ kafka-python
 numpy
 python-dotenv
 python-multipart
+asyncio

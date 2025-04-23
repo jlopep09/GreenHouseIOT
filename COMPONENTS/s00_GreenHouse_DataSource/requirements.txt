@@ -1,4 +1,4 @@
 fastapi[all]
 uvicorn
 kafka-python
-httpx
+aiohttp

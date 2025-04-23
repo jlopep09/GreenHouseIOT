@@ -1,5 +1,5 @@
 import asyncio
-import httpx
+import aiohttp
 from fastapi import FastAPI
 from app.routers.router_csv import router as router_csv
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,16 +14,23 @@ recoge los valores y los publica en el bus de kafka.
 """
 async def fetch_and_send_data():
     url = "http://192.168.1.201/read"
+    timeout = aiohttp.ClientTimeout(total=10)  # Timeout de 10 segundos
+    
     while True:
         try:
-            async with httpx.AsyncClient() as client:
+            async with aiohttp.ClientSession(timeout=timeout) as session:
                 print(f"Solicitando lectura...")
-                response = await client.get(url)
-                data = response.json()
-                print(f"Respuesta JSON: {data}")
-                send_data_to_kafka(data)
+                async with session.get(url) as response:
+                    data = await response.json()
+                    print(f"Respuesta JSON: {data}")
+                    send_data_to_kafka(data)
+        except asyncio.TimeoutError:
+            print(f"Timeout al conectar con {url}. La API podría estar inactiva.")
+        except aiohttp.ClientError as e:
+            print(f"Error de cliente HTTP: {e}")
         except Exception as e:
             print(f"Error al hacer la petición o enviar a Kafka: {e}")
+        
         await asyncio.sleep(30)
 
 @app.on_event("startup")
