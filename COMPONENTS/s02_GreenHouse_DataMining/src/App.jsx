@@ -19,6 +19,7 @@ export default function App() {
             try {
             // 1) Obtener el token de usuario
             const token = await getAccessTokenSilently();
+            const sub = user.sub;
 
             // 2) Llamar a tu endpoint de creación/comprobación de usuario
             await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/users/`, {
@@ -26,7 +27,7 @@ export default function App() {
                 headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,   // tu token de API
-                "UserAuth": token,                                                // token de Auth0
+                "UserAuth": sub,                                                // token de Auth0
                 },
                 body: JSON.stringify({
                 auth0_id: user.sub,
