@@ -68,30 +68,36 @@ def get_greenhouses(user_auth0_id: str):
         raise HTTPException(status_code=500, detail="Failed to retrieve greenhouses")
 
 def get_reads(user_auth0_id:str):
+    print("Obteniendo lecturas del userautid ")
+    print(user_auth0_id)
     reads = []
     try:
+        print("Lecturas: check 1 ")
         conn = connector.get_con()
         cur = conn.cursor()
-
+        print("Lecturas: check 2 ")
         # 1) Recuperar los IDs de los invernaderos de este usuario
         cur.execute("SELECT id FROM greenhouses WHERE owner_id = ?", (user_auth0_id,))
+        print("Lecturas: check 3 ")
         gh_ids = [row[0] for row in cur.fetchall()]
+        print("Lecturas: check 4 ")
 
         # Si no tiene invernaderos, devolvemos lista vacía
         if not gh_ids:
             conn.close()
             return {"reads": []}
-
+        print("Lecturas: check 5 ")
         # 2) Construir la consulta dinámica con placeholders para IN (...)
         placeholders = ",".join(["?"] * len(gh_ids))
         sql = f"SELECT * FROM sensor_reads WHERE gh_id IN ({placeholders})"
         cur.execute(sql, gh_ids)
+        print("Lecturas: check 6 ")
 
         # 3) Mapear columnas a diccionarios
         columns = [col[0] for col in cur.description]
         for row in cur.fetchall():
             reads.append(dict(zip(columns, row)))
-
+        print("Lecturas: check 7 ")
         conn.close()
         return {"reads": reads}
 
