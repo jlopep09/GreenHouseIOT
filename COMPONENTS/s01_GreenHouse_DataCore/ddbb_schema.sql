@@ -1,8 +1,8 @@
 -- --------------------------------------------------------
--- Host:                         localhost
+-- Host:                         vps.joselp.com
 -- Versión del servidor:         11.7.2-MariaDB-ubu2404 - mariadb.org binary distribution
 -- SO del servidor:              debian-linux-gnu
--- HeidiSQL Versión:             12.8.0.6908
+-- HeidiSQL Versión:             12.10.0.7000
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -23,12 +23,15 @@ USE `db_greenhouse`;
 CREATE TABLE IF NOT EXISTS `greenhouses` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Last updated date',
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci NOT NULL DEFAULT '',
-  `description` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci DEFAULT '',
+  `name` varchar(50) NOT NULL DEFAULT '',
+  `description` varchar(150) DEFAULT '',
   `image` mediumblob DEFAULT NULL,
-  `ip` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci NOT NULL DEFAULT '0.0.0.0',
+  `ip` varchar(50) NOT NULL DEFAULT '0.0.0.0',
+  `owner_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
+  UNIQUE KEY `name` (`name`),
+  KEY `FK1_owner` (`owner_id`),
+  CONSTRAINT `FK1_owner` FOREIGN KEY (`owner_id`) REFERENCES `users` (`auth0_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_spanish_ai_cs;
 
 -- La exportación de datos fue deseleccionada.
@@ -57,6 +60,20 @@ CREATE TABLE IF NOT EXISTS `sensor_reads` (
   PRIMARY KEY (`id`),
   KEY `gh_id` (`gh_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1717 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- La exportación de datos fue deseleccionada.
+
+-- Volcando estructura para tabla db_greenhouse.users
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `auth0_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_spanish_ai_cs NOT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_spanish_ai_cs DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_spanish_ai_cs DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `profile_img_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_spanish_ai_cs DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `auth0_id` (`auth0_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_spanish_ai_ci;
 
 -- La exportación de datos fue deseleccionada.
 
