@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import Navbar from './components/overlay/Navbar';
 import Sidebar from './components/overlay/Sidebar';
 import Devicebar from './components/overlay/Devicebar';
