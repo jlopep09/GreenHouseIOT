@@ -1,11 +1,7 @@
 import mariadb
 from fastapi import HTTPException, status
 import os
-
-import os
 from dotenv import load_dotenv
-from fastapi import HTTPException, status
-import mariadb
 
 def get_con():
     try:

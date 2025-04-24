@@ -1,13 +1,11 @@
 
-from app.controllers.processor import get_greenhouse_info_by_name
-from app.controllers.db.db_queries import create_greenhouse, update_greenhouse_ip
-#This class is used to auto detect gh ip changes to update the db
+from app.controllers.db.db_queries import create_greenhouse, update_greenhouse_ip, get_greenhouse_by_name
 
 class Detector():
 
     def checkIP(gh_name: str, gh_ip: str) -> bool:
         #llamar a db para obtener gh_ip de gh_name
-        db_result = get_greenhouse_info_by_name(gh_name)
+        db_result = get_greenhouse_by_name(gh_name)
         print(db_result)
         if(db_result["result"]==[]):
             print("No se ha encontrado gh con el nombre {gh_name}, creando nueva entrada en la base de datos...")

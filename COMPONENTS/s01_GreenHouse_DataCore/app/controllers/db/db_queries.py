@@ -1,9 +1,9 @@
-from sqlite3 import Binary
 import app.controllers.db.connector as connector
 import mariadb
 from fastapi import HTTPException, status
 from numpy import interp
 import app.const as const
+
 
 def create_img(image: bytes):
     try:
@@ -46,14 +46,14 @@ def get_greenhouse_by_name(name: str):
         
     except mariadb.Error as e:
         print(f"Error retrieving table information: {e}")
-def get_greenhouses():
+def get_greenhouses(user_auth0_id: str):
     greenhouses = []
     try:
         conn = connector.get_con()
         cur = conn.cursor()
 
         # retrieving information 
-        cur.execute("SELECT * FROM greenhouses") 
+        cur.execute("SELECT * FROM greenhouses WHERE owner_id = ?", (user_auth0_id,))
         columns = [col[0] for col in cur.description]  # Obtener nombres de las columnas
 
         for row in cur.fetchall():
@@ -64,29 +64,41 @@ def get_greenhouses():
         return {"greenhouses": greenhouses}  # Devuelve como JSON
         
     except mariadb.Error as e:
-        print(f"Error retrieving table information: {e}")
-        return {"error": "Failed to retrieve greenhouses"}
+        print(f"Error retrieving greenhouses for user {user_auth0_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve greenhouses")
 
-def get_reads():
+def get_reads(user_auth0_id:str):
     reads = []
     try:
         conn = connector.get_con()
         cur = conn.cursor()
 
-        # retrieving information 
-        cur.execute("SELECT * FROM sensor_reads") 
-        columns = [col[0] for col in cur.description]  # Obtener nombres de las columnas
+        # 1) Recuperar los IDs de los invernaderos de este usuario
+        cur.execute("SELECT id FROM greenhouses WHERE owner_id = ?", (user_auth0_id,))
+        gh_ids = [row[0] for row in cur.fetchall()]
+
+        # Si no tiene invernaderos, devolvemos lista vacía
+        if not gh_ids:
+            conn.close()
+            return {"reads": []}
+
+        # 2) Construir la consulta dinámica con placeholders para IN (...)
+        placeholders = ",".join(["?"] * len(gh_ids))
+        sql = f"SELECT * FROM sensor_reads WHERE gh_id IN ({placeholders})"
+        cur.execute(sql, gh_ids)
+
+        # 3) Mapear columnas a diccionarios
+        columns = [col[0] for col in cur.description]
         for row in cur.fetchall():
-            read = dict(zip(columns, row))  # Combina nombres de columnas con valores
-            reads.append(read)
+            reads.append(dict(zip(columns, row)))
 
         conn.close()
-        return {"reads": reads}  # Devuelve como JSON
-        
-    except mariadb.Error as e:
-        print(f"Error retrieving table information: {e}")
-        return {"error": "Failed to retrieve reads"}
+        return {"reads": reads}
 
+    except mariadb.Error as e:
+        print(f"Error retrieving reads for user {user_auth0_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve reads")
+    
 def get_reads_byid(id: int):
     reads = []
     try:

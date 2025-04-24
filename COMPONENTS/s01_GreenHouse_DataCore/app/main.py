@@ -1,15 +1,13 @@
 import asyncio
 import os
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 from app.routers.db_router import router as db_router
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-
 import app.kafka_module.consumer as kf
 
 SECRET_TOKEN = os.getenv("SECRET_TOKEN")
-
 
 app = FastAPI()
 # Middleware de autenticación
@@ -35,8 +33,6 @@ async def get_root():
 async def startup_event():
     print(f"Conectando a Kafka en kafka:9092...")
     asyncio.create_task(kf.consume_messages())
-
-
 
 app.add_middleware(
     CORSMiddleware,
