@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowSVG } from '../Buttons/ThemeButton';
 import AddNewGH from '../Buttons/AddNewGH';
-
+import { useAuth0 } from "@auth0/auth0-react"; 
 
 export default function Devicebar() {
     const [greenhouses, setGreenhouses] = useState([]);
     const [selectedDevice, setSelectedDevice] = useState('');
-
+    const { user, isAuthenticated, getAccessTokenSilently, isLoading } = useAuth0();
+    
     const fetchGreenhouses = async () => {
+        if (!isAuthenticated) return;
         try {
+            const token = await getAccessTokenSilently();
             const response = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/gh/`,
                 {
                   method: 'GET',
                   headers: {
                     'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
-                  },
+                    'UserAuth': `${token}`,
+                },
                 }
               );
             const data = await response.json();
@@ -29,7 +33,13 @@ export default function Devicebar() {
 
     useEffect(() => {
         fetchGreenhouses();
-    }, []);
+    }, [isAuthenticated, getAccessTokenSilently]);
+    
+    if (isLoading) return <div>Loading...</div>;  // Mostrar cargando mientras se espera la autenticación
+
+    if (!isAuthenticated) return <div>Please log in to see the data.</div>;  // Si el usuario no está autenticado
+
+    if (error) return <div>{error}</div>; // Mostrar el error si existe
 
     return (
         <>

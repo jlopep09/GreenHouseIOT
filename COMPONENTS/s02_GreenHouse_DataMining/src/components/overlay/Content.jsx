@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
-
+import { useAuth0 } from "@auth0/auth0-react"; 
 
 export const Content = () => {
     const [latestRead, setLatestRead] = useState(null);
-
+    const { user, isAuthenticated, getAccessTokenSilently, isLoading } = useAuth0();
     useEffect(() => {
         const fetchLatestRead = async () => {
+            if (!isAuthenticated) return;
             try {
+                const token = await getAccessTokenSilently();
                 const response = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/reads/`,
                     {
                       method: 'GET',
                       headers: {
                         'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
+                        'UserAuth': `${token}`,
                       },
                     }
                   );
@@ -28,7 +31,10 @@ export const Content = () => {
         };
 
         fetchLatestRead();
-    }, []);
+    }, [isAuthenticated, getAccessTokenSilently]);
+    if (isLoading) return <div>Loading...</div>; // Si estamos esperando que se cargue el estado de autenticación
+
+    if (!isAuthenticated) return <div>Please log in to see the data.</div>; // Si el usuario no está autenticado
 
     return (
         <div className='flex flex-row grow justify-center overflow-auto flex-wrap'>
