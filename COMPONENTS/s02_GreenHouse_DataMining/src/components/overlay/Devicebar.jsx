@@ -39,8 +39,6 @@ export default function Devicebar() {
 
     if (!isAuthenticated) return <div>Please log in to see the data.</div>;  // Si el usuario no está autenticado
 
-    if (error) return <div>{error}</div>; // Mostrar el error si existe
-
     return (
         <>
             <nav className="navbar bg-base-100 shadow-sm flex grow gap-2">
