@@ -83,12 +83,7 @@ export const Content = () => {
                         <p className='text-2xl btn btn-outline w-30'>{latestRead?.humidity ?? '-'}%</p>
                     </div>
                 </ContentCard>
-                <ContentCard>
-                    <div className='flex flex-col gap-4 items-center mb-2'>
-                        <strong className='m-2'>Temperatura del agua</strong>
-                        <p className='text-2xl btn btn-outline w-30'>{latestRead?.water_temperature?? '-'}</p>
-                    </div>
-                </ContentCard>
+
             </div>
             <div className='flex flex-col gap-2 justify-start mx-2 my-6'>
                 
@@ -105,6 +100,12 @@ export const Content = () => {
                     //</div>
                 //</ContentCard>
                 }
+                <ContentCard>
+                    <div className='flex flex-col gap-4 items-center mb-2'>
+                        <strong className='m-2'>Temperatura del agua</strong>
+                        <p className='text-2xl btn btn-outline w-30'>{latestRead?.water_temperature?? '-'}</p>
+                    </div>
+                </ContentCard>
             </div>
         </div>
     );

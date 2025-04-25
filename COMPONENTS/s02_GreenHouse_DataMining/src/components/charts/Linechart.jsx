@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const Linechart = () => {
   const [chartData, setChartData] = useState({
@@ -22,15 +23,24 @@ const Linechart = () => {
       },
     ],
   });
+  const {
+    user,
+    isAuthenticated,
+    isLoading,
+    getAccessTokenSilently,
+  } = useAuth0();
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!isAuthenticated) return;
       try {
+        const sub = user.sub;
         const response = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/reads/`,
           {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
+              'UserAuth': `${sub}`,
             },
           }
         );
