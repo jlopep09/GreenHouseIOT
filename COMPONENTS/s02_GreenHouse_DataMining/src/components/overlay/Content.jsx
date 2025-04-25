@@ -40,15 +40,14 @@ export const Content = () => {
     return (
         <div className='flex flex-row grow justify-center overflow-auto flex-wrap'>
             <div className='flex flex-col gap-2 justify-start mx-2 my-6'>
-                <h3 className='text-center'>Section</h3>
                 <ContentCard>
                     <div className='flex flex-row justify-center gap-4'>
                         <div className='bg-primary w-30 h-30'></div>
                         <div>
                             <strong className='m-2'>Invernadero</strong>
-                            <p>GH-{latestRead?.gh_id || 'N/A'}</p>
+                            <p>GH {(latestRead?.gh_id)? '-' : ''} {latestRead?.gh_id || ''} </p>
                             <p>León</p>
-                            <p>{latestRead ? new Date(latestRead.date).toLocaleDateString() : 'N/A'}</p>
+                            <p>{latestRead ? new Date(latestRead.date).toLocaleDateString() : '-'}</p>
                             <p>Conectado</p>
                         </div>
                     </div>
@@ -56,52 +55,56 @@ export const Content = () => {
                 <ContentCard>
                     <div className='flex flex-col gap-4 items-center mb-2'>
                         <strong className='m-2'>Luz</strong>
-                        <p className='text-2xl btn btn-outline w-30'>{latestRead?.light_level === 'True' ? 'On' : 'Off'}</p>
+                        <p className='text-2xl btn btn-outline w-30'>{
+                            (latestRead?.light_level === 'True' || latestRead?.light_level === 'False') ?
+                        (latestRead?.light_level === 'True' ? 'On' : 'Off') : '-'
+                        }</p>
                     </div>
                 </ContentCard>
                 <ContentCard>
                     <div className='flex flex-col gap-4 items-center mb-2'>
                         <strong className='m-2'>TDS</strong>
-                        <p className='text-2xl btn btn-outline w-30'>{latestRead?.tds?? 'N/A'}</p>
+                        <p className='text-2xl btn btn-outline w-30'>{latestRead?.tds?? '-'}</p>
                     </div>
                 </ContentCard>
 
             </div>
             <div className='flex flex-col gap-2 justify-start mx-2 my-6'>
-                <h3 className='text-center'>Section</h3>
+                
                 <ContentCard>
                     <div className='flex flex-col gap-4 items-center mb-2'>
                         <strong className='m-2'>Nivel de agua</strong>
-                        <p className='text-2xl btn btn-outline w-30'>{latestRead?.water_level ?? 'N/A'}%</p>
+                        <p className='text-2xl btn btn-outline w-30'>{latestRead?.water_level ?? '-'}%</p>
                     </div>
                 </ContentCard>
                 <ContentCard>
                     <div className='flex flex-col gap-4 items-center mb-2'>
                         <strong className='m-2'>Humedad del aire</strong>
-                        <p className='text-2xl btn btn-outline w-30'>{latestRead?.humidity ?? 'N/A'}%</p>
+                        <p className='text-2xl btn btn-outline w-30'>{latestRead?.humidity ?? '-'}%</p>
                     </div>
                 </ContentCard>
                 <ContentCard>
                     <div className='flex flex-col gap-4 items-center mb-2'>
                         <strong className='m-2'>Temperatura del agua</strong>
-                        <p className='text-2xl btn btn-outline w-30'>{latestRead?.water_temperature?? 'N/A'}</p>
+                        <p className='text-2xl btn btn-outline w-30'>{latestRead?.water_temperature?? '-'}</p>
                     </div>
                 </ContentCard>
             </div>
             <div className='flex flex-col gap-2 justify-start mx-2 my-6'>
-                <h3 className='text-center'>Section</h3>
+                
                 <ContentCard>
                     <div className='flex flex-col gap-4 items-center mb-2'>
                         <strong className='m-2'>Temperatura</strong>
-                        <p className='text-2xl btn btn-outline w-30'>{latestRead?.temperature ?? 'N/A'}ºC</p>
+                        <p className='text-2xl btn btn-outline w-30'>{latestRead?.temperature ?? '-'}ºC</p>
                     </div>
                 </ContentCard>
-                <ContentCard>
-                    <div className='flex flex-col gap-4 items-center mb-2'>
-                        <strong className='m-2'>Ventiladores</strong>
-                        <p className='text-2xl btn btn-outline w-30'>Off</p>
-                    </div>
-                </ContentCard>
+                {//<ContentCard>
+                    //<div className='flex flex-col gap-4 items-center mb-2'>
+                        //<strong className='m-2'>Ventiladores</strong>
+                        //<p className='text-2xl btn btn-outline w-30'>Off</p>
+                    //</div>
+                //</ContentCard>
+                }
             </div>
         </div>
     );
