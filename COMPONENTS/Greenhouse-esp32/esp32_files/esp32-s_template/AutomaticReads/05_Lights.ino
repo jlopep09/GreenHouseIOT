@@ -4,7 +4,7 @@
 #include <ESPAsyncWebServer.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
-#include <TimeLib.h>
+
 
 String horaEncendido = "09:00"; // Formato HH:MM
 String horaApagado   = "18:00";

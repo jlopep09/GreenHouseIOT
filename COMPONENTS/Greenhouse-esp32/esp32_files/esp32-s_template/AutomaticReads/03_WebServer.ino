@@ -4,7 +4,7 @@
 #include <ESPAsyncWebServer.h> 
 #include <NTPClient.h>
 #include <WiFiUdp.h>
-#include <TimeLib.h>
+
 
 extern bool   lucesEncendidas;     // LUCES
 extern bool   modoAutomatico;      // LUCES
@@ -22,7 +22,7 @@ extern String horaEncendido_fan;   //VENTILADOR
 extern String horaApagado_fan;     //VENTILADOR
 
 extern bool bombaEncendido;        //BOMBA
-extern String obtenerHoraActual();
+String obtenerHoraActual();
 
 //WEB SERVER
 AsyncWebServer server(80); 

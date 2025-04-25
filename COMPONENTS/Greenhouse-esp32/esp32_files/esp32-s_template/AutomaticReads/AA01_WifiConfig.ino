@@ -4,14 +4,14 @@
 #include <ESPAsyncWebServer.h> 
 #include <NTPClient.h>
 #include <WiFiUdp.h>
-#include <TimeLib.h>
+
 
 
 
 void connectToWiFi() {
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
+    delay(500);
     Serial.println("Conectando a WiFi...");
   }
   Serial.println("Conectado a WiFi!");

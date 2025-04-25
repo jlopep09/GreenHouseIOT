@@ -4,26 +4,18 @@
 #include <ESPAsyncWebServer.h> 
 #include <NTPClient.h>
 #include <WiFiUdp.h>
-#include <TimeLib.h>
+
 
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP);
+NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", 7200, 60000);
 
 
 void setupTime(){
   timeClient.begin();
-  timeClient.setTimeOffset(7200);
-  if (timeClient.forceUpdate()) {
-    Serial.println("Hora actualizada (force).");
-  } else {
-    Serial.println("No se ha podido actualizar la hora (force).");
-  }
 }
 
 void syncTime(){
-  if (timeClient.update()) {
-    Serial.println("Hora actualizada.");
-  }
+  timeClient.update();
 }
 String obtenerHoraActual() {
   return timeClient.getFormattedTime().substring(0, 5); // HH:MM
