@@ -19,7 +19,7 @@ export default function Params() {
                     <section className='card bg-base-200 flex flex-row gap-4 justify-center'>
                         <Donut></Donut>
                         <Barchart></Barchart>
-                        <Linechart></Linechart>
+                        <Linechart chartWidth={600}></Linechart>
                     </section>
 
                 </div>

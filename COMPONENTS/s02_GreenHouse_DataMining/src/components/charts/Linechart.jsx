@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 import { useAuth0 } from "@auth0/auth0-react";
 
-const Linechart = () => {
+const Linechart = ({chartWidth}) => {
   const [chartData, setChartData] = useState({
     options: {
       chart: {
@@ -72,7 +72,7 @@ const Linechart = () => {
     <div className="app">
       <div className="row">
         <div className="mixed-chart">
-          <Chart options={chartData.options} series={chartData.series} type="line" width="600" />
+          <Chart options={chartData.options} series={chartData.series} type="line" width={chartWidth} />
         </div>
       </div>
     </div>

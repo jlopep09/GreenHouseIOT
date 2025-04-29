@@ -3,6 +3,7 @@ import { ThemeButton } from '../Buttons/ThemeButton'
 import LogoutButton from '../accounts/LogoutButton'
 import Logo from '../atoms/Logo'
 import ThemeModeButton from '../Buttons/ThemeModeButton'
+import { Link } from 'react-router'
 
 
 export default function Navbar() {
@@ -12,7 +13,7 @@ export default function Navbar() {
             <header className="navbar bg-base-100 shadow-sm border-b-1 border-b-base-200">
                 <nav className="navbar-start">
                     <DrawerIcon/>
-                    <a className="btn btn-ghost text-xl" href='/'><Logo/></a>
+                    <Link className="btn btn-ghost text-xl" to='/'><Logo/></Link>
                 </nav>
                 <h1 className="navbar-center">
                     
@@ -99,9 +100,9 @@ export const UserSVG = () => {
           <ul
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-32 p-2 shadow">
             <li>
-              <a className="justify-center">
+              <Link className="justify-center">
                 <p className='text-center'>Perfil</p>
-              </a>
+              </Link>
             </li>
             <li className="justify-center"><LogoutButton></LogoutButton></li>
           </ul>

@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth0 } from "@auth0/auth0-react"; 
+import { Link } from 'react-router';
+import Linechart from '../charts/Linechart';
 
 const ContentCard = ({ children }) => (
     <div className="card bg-base-200 shadow-sm min-h-60 col-span-1 p-4">
-        <div className='flex flex-col items-center justify-center gap-2 h-full mb-2'>
+        <div className='flex flex-col items-center justify-center h-full mb-2'>
             {children}
       </div>
     </div>
   );
   
   const ContentCardLarge = ({ children }) => (
-    <div className="card bg-base-200 shadow-sm min-h-60 col-span-2 p-4">
-        <div className='flex flex-col items-center justify-center gap-2 h-full mb-2'>
+    <div className="card bg-base-200 shadow-sm min-h-60 sm:col-span-2 p-4">
+        <div className='flex flex-col items-center justify-center h-full mb-2'>
             {children}
         </div>
     </div>
@@ -53,59 +55,151 @@ const ContentCard = ({ children }) => (
     if (!isAuthenticated) return <div>Please log in to see the data.</div>;
   
     return (
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-6">
         <ContentCardLarge>
           <div className="flex flex-row justify-center gap-4">
-            <div className="bg-primary w-20 h-20 rounded-full"></div>
-            <div>
-              <strong className="block mb-1">Invernadero</strong>
+            <div className="bg-primary w-30 h-30 rounded-md"></div>
+            <div className='flex flex-col align-middle justify-center items-start'>
+              <strong className="block mb-1 -mt-1">Invernadero</strong>
               <p>GH {latestRead?.gh_id ?? '-'}</p>
               <p>León</p>
               <p>{latestRead ? new Date(latestRead.date).toLocaleDateString() : '-'}</p>
-              <p>Conectado</p>
+              <p>{latestRead ? "Conextado" : 'Sin conexión'}</p>
             </div>
           </div>
         </ContentCardLarge>
   
+        <ContentCard><AirCardContent latestRead={latestRead}/></ContentCard>
         <ContentCard>
-          
-            <strong className="m-2">Luz</strong>
-            <p className="text-2xl btn btn-outline w-30">
-                {
-                (latestRead?.light_level === 'True' || latestRead?.light_level === 'False')
-                    ? (latestRead?.light_level === 'True' ? 'On' : 'Off') : '-'
-                }
-            </p>
-          
+        <section className='card bg-base-200 flex flex-col justify-center'>
+        <strong className="w-full text-center">Temperatura del aire</strong>
+          <Linechart chartWidth={200}></Linechart>
+          <button className='btn btn-link'>Ampliar</button>
+        </section>
+        
+        
         </ContentCard>
-  
+        <ContentCard><WaterCardContent latestRead={latestRead}/></ContentCard>
         <ContentCard>
-          <strong className="m-2">TDS</strong>
-          <p className="text-2xl btn btn-outline w-30">{latestRead?.tds ?? '-'}</p>
+        <section className='card bg-base-200 flex flex-col justify-center'>
+        <strong className="w-full text-center">Temperatura del agua</strong>
+          <Linechart chartWidth={200}></Linechart>
+          <button className='btn btn-link'>Ampliar</button>
+        </section>
+        
+        
         </ContentCard>
-  
-        <ContentCard>
-          <strong className="m-2">Nivel de agua</strong>
-          <p className="text-2xl btn btn-outline w-30">{latestRead?.water_level ?? '-'}%</p>
-        </ContentCard>
-  
-        <ContentCard>
-          <strong className="m-2">Humedad del aire</strong>
-          <p className="text-2xl btn btn-outline w-30">{latestRead?.humidity ?? '-'}%</p>
-        </ContentCard>
-  
-        <ContentCard>
-          <strong className="m-2">Temperatura</strong>
-          <p className="text-2xl btn btn-outline w-30">{latestRead?.temperature ?? '-'}ºC</p>
-        </ContentCard>
-  
-        <ContentCard>
-          <strong className="m-2">Temperatura del agua</strong>
-          <p className="text-2xl btn btn-outline w-30">{latestRead?.water_temperature ?? '-'}</p>
-        </ContentCard>
-  
+        <ContentCardLarge>
+          <div className='flex flex-col align-start justify-center items-start gap-1'>
+              <strong className="block mb-2 -mt-1">Programadores</strong>
+              <button className='btn btn-primary font-bold w-full'>Ventilador</button>
+              <button className='btn btn-primary font-bold w-full'>Oxigenador</button>
+              <button className='btn btn-neutral font-bold w-full'>Luces</button>
+          </div>
+        </ContentCardLarge>
+        <ContentCard><TableCardContent latestRead={latestRead} title={"Luz"} readKey={"light_level"}/></ContentCard>
+        <ContentCard><TableCardContent latestRead={latestRead} title={"Ventiladores"} readKey={"light_level"}/></ContentCard>
+        
         {/* Aquí podrías agregar más ContentCardLarge con gráficas, formularios, etc. */}
       </div>
     );
   };
+
+export const TableRow = ({children, title}) => {
+  const rowClassNames = "flex flex-row justify-between w-full px-5 border-t-1 border-base-400 py-1"
+  const spanClassNames  = "text-lg  text-center min-w-16"
+  return(
+    <>
+      <div className={rowClassNames}>
+        <span>{title} </span>
+        <span className={spanClassNames}>
+        {
+          children
+          }
+        </span>
+      </div>
+    </>
+  )
+
+}
+export const TableCardContent = ({latestRead, title, readKey}) => {
+  return (
+    <>
+      <strong className="m-2">{title}</strong>
+
+      <div className='min-w-4xs h-full'>
+        <TableRow title={"Estado actual:"}>{
+          (latestRead?.light_level === 'True' || latestRead?.light_level === 'False')
+              ? (latestRead?.light_level === 'True' ? 'On' : 'Off') : '-'
+          }</TableRow>
+        <TableRow title={"Modo auto:"}>{
+          (latestRead?.readKey === 'True' || latestRead?.readKey === 'False')
+              ? (latestRead?.readKey === 'True' ? 'On' : 'Off') : '-'
+          }</TableRow>
+                  <TableRow title={"Hora de encendido:"}>{
+          (latestRead?.readKey === 'True' || latestRead?.readKey === 'False')
+              ? (latestRead?.readKey === 'True' ? 'On' : 'Off') : '-'
+          }</TableRow>
+                  <TableRow title={"Hora de apagado:"}>{
+          (latestRead?.readKey === 'True' || latestRead?.readKey === 'False')
+              ? (latestRead?.readKey === 'True' ? 'On' : 'Off') : '-'
+          }</TableRow>
+        
+      </div>
+
+    </>
+  )
+}
+export const WaterCardContent = ({latestRead}) => {
+  return (
+    <>
+      <strong className="m-2">Agua</strong>
+
+      <div className=' min-w-4xs h-full'>
+        <TableRow title={"Temperatura:"}>{
+          (latestRead?.light_level === 'True' || latestRead?.light_level === 'False')
+              ? (latestRead?.light_level === 'True' ? 'On' : 'Off') : '-'
+          }</TableRow>
+        <TableRow title={"TDS:"}>{
+          (latestRead?.readKey === 'True' || latestRead?.readKey === 'False')
+              ? (latestRead?.readKey === 'True' ? 'On' : 'Off') : '-'
+          }</TableRow>
+                  <TableRow title={"Necesita llenado:"}>{
+          (latestRead?.readKey === 'True' || latestRead?.readKey === 'False')
+              ? (latestRead?.readKey === 'True' ? 'On' : 'Off') : '-'
+          }</TableRow>
+          <div className='flex flex-row w-full justify-center align-middle mt-2'>
+            <button className="btn btn-primary">Bomba de agua</button>
+          </div>
+          
+      </div>
+
+    </>
+  )
+}
+export const AirCardContent = ({latestRead}) => {
+  return (
+    <>
+      <strong className="m-2">Aire</strong>
+
+      <div className=' min-w-4xs h-full'>
+        <TableRow title={"Temperatura:"}>{
+          (latestRead?.light_level === 'True' || latestRead?.light_level === 'False')
+              ? (latestRead?.light_level === 'True' ? 'On' : 'Off') : '-'
+          }</TableRow>
+        <TableRow title={"Humedad:"}>{
+          (latestRead?.readKey === 'True' || latestRead?.readKey === 'False')
+              ? (latestRead?.readKey === 'True' ? 'On' : 'Off') : '-'
+          }</TableRow>
+          <div className='flex flex-row w-full justify-center align-middle mt-2'>
+            <Link to='/config' className="btn btn-link font-bold text-md">Configurar ventiladores</Link>
+          </div>
+          
+      </div>
+
+    </>
+  )
+}
+
+
   
