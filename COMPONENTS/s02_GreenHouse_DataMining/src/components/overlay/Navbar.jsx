@@ -1,24 +1,26 @@
 import React from 'react'
 import { ThemeButton } from '../Buttons/ThemeButton'
 import LogoutButton from '../accounts/LogoutButton'
+import Logo from '../atoms/Logo'
+import ThemeModeButton from '../Buttons/ThemeModeButton'
 
 
 export default function Navbar() {
 
     return (
         <>
-            <header className="navbar bg-base-100 shadow-sm">
+            <header className="navbar bg-base-100 shadow-sm border-b-1 border-b-base-200">
                 <nav className="navbar-start">
                     <DrawerIcon/>
+                    <a className="btn btn-ghost text-xl" href='/'><Logo/></a>
                 </nav>
                 <h1 className="navbar-center">
-                    <a className="btn btn-ghost text-xl">{import.meta.env.VITE_APP_NAME}</a>
+                    
                 </h1>
-                <nav className="navbar-end">
-                    <LogoutButton></LogoutButton>
-                    <SearchIcon/>
-                    <ThemeButton/>
+                <nav className="navbar-end gap-1">
+                    <ThemeModeButton></ThemeModeButton>
                     <NotificationMenu/>
+                    <ProfileButtonDropdown></ProfileButtonDropdown>
                 </nav>
             </header>
         </>
@@ -34,11 +36,9 @@ const NotificationMenu = () =>{
                 </div>
             </button>
         <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-82 p-2 shadow-sm">
-        
             <li className="menu-title p-4 pb-2 text-xs opacity-60 tracking-wide">Notificaciones</li>
             <NotificationElement/>
             <NotificationElement/>
-
         </ul>
         </div>                 
         )
@@ -71,4 +71,43 @@ const DrawerIcon = () =>{
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" /> </svg> 
         </label> )
 }
+
+export const UserSVG = () => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        </svg>
+
+    )
+  }
+  
+  
+  export const ProfileButtonDropdown = () => {
+    return(
+      <div className="flex-none">
+        <div className="dropdown dropdown-end">
+          {/* Eliminamos la clase avatar que podría estar causando conflictos */}
+          <button 
+            tabIndex={0} 
+            className="btn btn-ghost btn-circle overflow-hidden focus:outline-none"
+            style={{ transition: "all 0.3s ease" }}
+          >
+            <div className="flex items-center justify-center w-full h-full">
+              <UserSVG />
+            </div>
+          </button>
+          <ul
+            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-32 p-2 shadow">
+            <li>
+              <a className="justify-center">
+                <p className='text-center'>Perfil</p>
+              </a>
+            </li>
+            <li className="justify-center"><LogoutButton></LogoutButton></li>
+          </ul>
+        </div>
+      </div>
+    )
+  }
+
 
