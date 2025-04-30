@@ -38,7 +38,7 @@ def get_con():
             detail=f"Error connecting to MariaDB Platform: {e}"
         )
 
-
+"""
 def db_info():
     # Query to get tables and columns
     result = ""
@@ -68,4 +68,4 @@ def db_info():
     except mariadb.Error as e:
         print(f"Error retrieving table information: {e}")
 
-
+"""

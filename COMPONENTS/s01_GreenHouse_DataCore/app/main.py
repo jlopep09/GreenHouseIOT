@@ -3,6 +3,9 @@ import os
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 from app.routers.db_router import router as db_router
+from app.routers.users import router as users_router
+from app.routers.greenhouses import router as greenhouses_router
+from app.routers.reads import router as reads_router
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import app.kafka_module.consumer as kf
@@ -24,6 +27,9 @@ async def verify_authentication(request: Request, call_next):
     return response
 
 app.include_router(db_router)
+app.include_router(users_router)
+app.include_router(greenhouses_router)
+app.include_router(reads_router)
 
 @app.get("/health")
 async def get_root():

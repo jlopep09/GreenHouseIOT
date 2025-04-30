@@ -4,13 +4,10 @@ from fastapi import HTTPException, status
 from numpy import interp
 import app.const as const
 
-
 def create_img(image: bytes):
     try:
         conn = connector.get_con()
         cur = conn.cursor()
-
-        # Inserta solo la imagen en la base de datos
         cur.execute(
             "INSERT INTO images (image) VALUES (%s)",
             (image,)  # ✅ Asegurar que es una tupla (con la coma final)
@@ -18,15 +15,12 @@ def create_img(image: bytes):
 
         conn.commit()
         img_id = cur.lastrowid
-
         conn.close()
-
         return {"message": "Image saved successfully", "id": img_id}
 
     except mariadb.Error as e:
-        print(f"Error de MariaDB: {e}")  # Para depuración
+        print(f"Error de MariaDB: {e}")
         raise HTTPException(status_code=500, detail=f"Error saving image: {str(e)}")
-
 
 def get_greenhouse_by_name(name: str):
     ghs = []
@@ -34,7 +28,6 @@ def get_greenhouse_by_name(name: str):
         conn = connector.get_con()
         cur = conn.cursor()
         
-        # Retrieving information
         cur.execute("SELECT * FROM greenhouses WHERE name=?", (name,)) 
         columns = [col[0] for col in cur.description]  # Obtener nombres de las columnas
         for row in cur.fetchall():
@@ -46,13 +39,13 @@ def get_greenhouse_by_name(name: str):
         
     except mariadb.Error as e:
         print(f"Error retrieving table information: {e}")
+
 def get_greenhouses(user_auth0_id: str):
     greenhouses = []
     try:
         conn = connector.get_con()
         cur = conn.cursor()
 
-        # retrieving information 
         cur.execute("SELECT * FROM greenhouses WHERE owner_id = ?", (user_auth0_id,))
         columns = [col[0] for col in cur.description]  # Obtener nombres de las columnas
 
