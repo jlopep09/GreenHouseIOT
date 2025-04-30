@@ -19,6 +19,22 @@
 CREATE DATABASE IF NOT EXISTS `db_greenhouse` /*!40100 DEFAULT CHARACTER SET utf8mb3 COLLATE utf8mb3_uca1400_spanish_ai_ci */;
 USE `db_greenhouse`;
 
+-- Volcando estructura para tabla db_greenhouse.actuators
+CREATE TABLE IF NOT EXISTS `actuators` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` enum('pump','fan','light','oxigen') NOT NULL,
+  `auto` bit(1) DEFAULT b'0',
+  `timer_on` time DEFAULT '09:00:00',
+  `timer_off` time DEFAULT '14:00:00',
+  `manual_status` bit(1) DEFAULT b'0',
+  `gh_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_actuators_gh_id` (`gh_id`),
+  CONSTRAINT `FK_actuators_gh_id` FOREIGN KEY (`gh_id`) REFERENCES `greenhouses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_spanish_ai_ci;
+
+-- La exportación de datos fue deseleccionada.
+
 -- Volcando estructura para tabla db_greenhouse.greenhouses
 CREATE TABLE IF NOT EXISTS `greenhouses` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -32,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `greenhouses` (
   UNIQUE KEY `name` (`name`),
   KEY `FK1_owner` (`owner_id`),
   CONSTRAINT `FK1_owner` FOREIGN KEY (`owner_id`) REFERENCES `users` (`auth0_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_spanish_ai_cs;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_spanish_ai_cs;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -43,6 +59,20 @@ CREATE TABLE IF NOT EXISTS `images` (
   `label` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_spanish_ai_ci;
+
+-- La exportación de datos fue deseleccionada.
+
+-- Volcando estructura para tabla db_greenhouse.notifications
+CREATE TABLE IF NOT EXISTS `notifications` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_spanish_ai_cs NOT NULL,
+  `text` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_spanish_ai_cs NOT NULL,
+  `is_new` bit(1) DEFAULT b'1',
+  `user_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_spanish_ai_cs NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `FK1_notifications_users` (`user_id`),
+  CONSTRAINT `FK1_notifications_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`auth0_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_spanish_ai_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -59,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `sensor_reads` (
   `gh_id` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `gh_id` (`gh_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1717 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1719 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -73,7 +103,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `profile_img_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_spanish_ai_cs DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth0_id` (`auth0_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_spanish_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_spanish_ai_ci;
 
 -- La exportación de datos fue deseleccionada.
 
