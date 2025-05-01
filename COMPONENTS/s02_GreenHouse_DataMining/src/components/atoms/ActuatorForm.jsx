@@ -48,7 +48,7 @@ export default function ActuatorForm({ children }) {
   useEffect(() => {
     const fetchConfigs = async () => {
       if (!isAuthenticated || !selectedGhId) return;
-      console.log(`fetch to ${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/`, err);
+      console.log(`fetch to ${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/`);
       try {
         const sub = user.sub;
         const res = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/`,
