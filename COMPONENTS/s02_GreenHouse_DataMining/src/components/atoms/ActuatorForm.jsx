@@ -96,8 +96,8 @@ export default function ActuatorForm({ children }) {
         method,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-          'UserAuth': sub,
+          'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
+          'UserAuth': `${sub}`,
         },
         body: JSON.stringify(payload),
       });
