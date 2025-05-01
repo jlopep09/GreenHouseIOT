@@ -71,6 +71,23 @@ export default function ActuatorForm({ children }) {
     fetchConfigs();
   }, [isAuthenticated, getAccessTokenSilently, selectedGhId, user]);
 
+  const handleModeChange = (formId, isAuto) => {
+    // Obtener los checkboxes
+    const form = document.getElementById(formId);
+    if (!form) return;
+    
+    const autoCheckbox = form.querySelector('input[name="auto"]');
+    const manualCheckbox = form.querySelector('input[name="manual_status"]');
+    
+    if (isAuto) {
+      // Si se activa Auto, desactivar Manual
+      manualCheckbox.checked = false;
+    } else {
+      // Si se activa Manual, desactivar Auto
+      autoCheckbox.checked = false;
+    }
+  };
+
   const handleSubmit = async (evt, typeKey) => {
     evt.preventDefault();
     const form = evt.target;
@@ -110,6 +127,25 @@ export default function ActuatorForm({ children }) {
     }
   };
 
+  // Determinar el valor por defecto para auto y manual basado en configs o valores por defecto
+  const getInitialAutoValue = (cfg) => {
+    // Si existe una configuración, usar su valor
+    if (cfg && (cfg.auto === 0 || cfg.auto === 1)) {
+      return cfg.auto === 1;
+    }
+    // Si no existe configuración previa, auto estará marcado por defecto
+    return true;
+  };
+
+  const getInitialManualValue = (cfg) => {
+    // Si existe una configuración, usar su valor
+    if (cfg && (cfg.manual_status === 0 || cfg.manual_status === 1)) {
+      return cfg.manual_status === 1;
+    }
+    // Si no existe configuración previa, manual estará desmarcado por defecto
+    return false;
+  };
+
   return (
     <>
       <button className="btn btn-primary" onClick={() => setIsOpen(true)}>
@@ -141,22 +177,40 @@ export default function ActuatorForm({ children }) {
             {/* Formularios de actuadores */}
             {selectedGhId && ACTUATOR_TYPES.map(({ key, label }) => {
               const cfg = configs[key] || {};
+              const formId = `form-${key}`;
+              const isAutoChecked = getInitialAutoValue(cfg);
+              const isManualChecked = getInitialManualValue(cfg);
+              
               return (
-                <form key={key} onSubmit={e => handleSubmit(e, key)} className="mb-6">
+                <form id={formId} key={key} onSubmit={e => handleSubmit(e, key)} className="mb-6">
                   <h3 className="font-semibold text-lg mb-2">{label}</h3>
                   <div className="grid grid-cols-2 gap-4 items-end">
+                    {/* Auto primero */}
                     <div>
                       <label className="label">
                         <span className="label-text">Auto</span>
                       </label>
-                      <input type="checkbox" name="auto" defaultChecked={cfg.auto === 1} className="checkbox" />
+                      <input 
+                        type="checkbox" 
+                        name="auto" 
+                        defaultChecked={isAutoChecked} 
+                        className="checkbox" 
+                        onChange={() => handleModeChange(formId, true)}
+                      />
                     </div>
 
+                    {/* Manual después */}
                     <div>
                       <label className="label">
                         <span className="label-text">Manual</span>
                       </label>
-                      <input type="checkbox" name="manual_status" defaultChecked={cfg.manual_status === 1} className="checkbox" />
+                      <input 
+                        type="checkbox" 
+                        name="manual_status" 
+                        defaultChecked={isManualChecked} 
+                        className="checkbox"
+                        onChange={() => handleModeChange(formId, false)} 
+                      />
                     </div>
 
                     <div>
