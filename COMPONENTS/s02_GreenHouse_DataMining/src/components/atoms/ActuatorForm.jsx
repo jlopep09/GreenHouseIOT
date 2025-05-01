@@ -90,7 +90,7 @@ export default function ActuatorForm({ children }) {
       const method = existing?.id ? 'PUT' : 'POST';
       const url = existing?.id
         ? `${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/${existing.id}`
-        : `${import.meta.env.VITE_DDBB_API_IP}/db/actuators`;
+        : `${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig`;
 
       const res = await fetch(url, {
         method,
