@@ -16,6 +16,7 @@ export default function ActuatorForm({ children }) {
   const [configs, setConfigs] = useState({});
   const [isOpen, setIsOpen] = useState(false);
 
+  // Fetch invernaderos asociados al usuario
   useEffect(() => {
     const fetchGreenhouses = async () => {
       if (!isAuthenticated) return;
@@ -26,15 +27,15 @@ export default function ActuatorForm({ children }) {
           {
             method: 'GET',
             headers: {
-              'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,
-              'UserAuth': `${sub}`,
+            'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
+            'UserAuth': `${sub}`,
             },
           }
         );
         const data = await res.json();
         if (data.greenhouses.length > 0) {
-          setGreenhouses(data.greenhouses);
-          setSelectedGhId(data.greenhouses[0].id);
+            setGreenhouses(data.greenhouses);
+            setSelectedGhId(data.greenhouses[0].id);
         }
       } catch (err) {
         console.error('Error fetching greenhouses:', err);
@@ -43,20 +44,22 @@ export default function ActuatorForm({ children }) {
     fetchGreenhouses();
   }, [isAuthenticated, getAccessTokenSilently, user]);
 
+  // Fetch configs cuando cambie el invernadero seleccionado
   useEffect(() => {
     const fetchConfigs = async () => {
       if (!isAuthenticated || !selectedGhId) return;
+      console.log(`fetch to ${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/`);
       try {
         const sub = user.sub;
         const res = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/`,
-          {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,
-              'UserAuth': `${sub}`,
+            {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
+                'UserAuth': `${sub}`,
             },
-          }
-        );
+            }
+          );
         const result = await res.json();
         const map = {};
         result.configs?.forEach(c => { map[c.name] = c; });
@@ -71,13 +74,11 @@ export default function ActuatorForm({ children }) {
   const handleSubmit = async (evt, typeKey) => {
     evt.preventDefault();
     const form = evt.target;
-    const selectedMode = form[`mode_${typeKey}`].value;
-
     const payload = {
       name: typeKey,
       gh_id: selectedGhId,
-      auto: selectedMode === 'auto' ? 1 : 0,
-      manual_status: selectedMode === 'manual' ? 1 : 0,
+      auto: form.auto.checked ? 1 : 0,
+      manual_status: form.manual_status.checked ? 1 : 0,
       timer_on: form.timer_on.value,
       timer_off: form.timer_off.value,
     };
@@ -94,7 +95,7 @@ export default function ActuatorForm({ children }) {
         method,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,
+          'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
           'UserAuth': `${sub}`,
         },
         body: JSON.stringify(payload),
@@ -120,6 +121,7 @@ export default function ActuatorForm({ children }) {
           <div className="modal-box max-w-lg">
             <h2 className="font-bold text-xl mb-4">Configurar Actuadores</h2>
 
+            {/* Selector de invernadero */}
             <div className="mb-4">
               <label className="label">
                 <span className="label-text">Invernadero</span>
@@ -136,62 +138,39 @@ export default function ActuatorForm({ children }) {
               </select>
             </div>
 
+            {/* Formularios de actuadores */}
             {selectedGhId && ACTUATOR_TYPES.map(({ key, label }) => {
               const cfg = configs[key] || {};
               return (
                 <form key={key} onSubmit={e => handleSubmit(e, key)} className="mb-6">
                   <h3 className="font-semibold text-lg mb-2">{label}</h3>
                   <div className="grid grid-cols-2 gap-4 items-end">
-                    <div className="col-span-2">
+                    <div>
                       <label className="label">
-                        <span className="label-text">Modo de funcionamiento</span>
+                        <span className="label-text">Auto</span>
                       </label>
-                      <div className="flex gap-4">
-                        <label className="flex items-center gap-2">
-                          <input
-                            type="radio"
-                            name={`mode_${key}`}
-                            value="manual"
-                            defaultChecked={cfg.auto !== 1}
-                            className="radio"
-                          />
-                          Manual
-                        </label>
-                        <label className="flex items-center gap-2">
-                          <input
-                            type="radio"
-                            name={`mode_${key}`}
-                            value="auto"
-                            defaultChecked={cfg.auto === 1}
-                            className="radio"
-                          />
-                          Auto
-                        </label>
-                      </div>
+                      <input type="checkbox" name="auto" defaultChecked={cfg.auto === 1} className="checkbox" />
+                    </div>
+
+                    <div>
+                      <label className="label">
+                        <span className="label-text">Manual</span>
+                      </label>
+                      <input type="checkbox" name="manual_status" defaultChecked={cfg.manual_status === 1} className="checkbox" />
                     </div>
 
                     <div>
                       <label className="label">
                         <span className="label-text">Hora On</span>
                       </label>
-                      <input
-                        type="time"
-                        name="timer_on"
-                        defaultValue={cfg.timer_on || '09:00'}
-                        className="input input-bordered"
-                      />
+                      <input type="time" name="timer_on" defaultValue={cfg.timer_on || '09:00'} className="input input-bordered" />
                     </div>
 
                     <div>
                       <label className="label">
                         <span className="label-text">Hora Off</span>
                       </label>
-                      <input
-                        type="time"
-                        name="timer_off"
-                        defaultValue={cfg.timer_off || '14:00'}
-                        className="input input-bordered"
-                      />
+                      <input type="time" name="timer_off" defaultValue={cfg.timer_off || '14:00'} className="input input-bordered" />
                     </div>
                   </div>
 
