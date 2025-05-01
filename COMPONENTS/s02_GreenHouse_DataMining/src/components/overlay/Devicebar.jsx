@@ -11,7 +11,6 @@ export default function Devicebar() {
     const fetchGreenhouses = async () => {
         if (!isAuthenticated) return;
         try {
-            const token = await getAccessTokenSilently();
             const sub = user.sub;
             const response = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/gh/`,
                 {

@@ -99,7 +99,75 @@ def create_ghconfig(user_auth0_id: str, actuator_data: dict):
     except mariadb.Error as e:
         print(f"Error al crear configuración: {e}")
         raise HTTPException(status_code=500, detail=f"Error al crear configuración: {str(e)}")
-
+def update_ghconfig(user_auth0_id: str, actuator_id: int, actuator_data: dict):
+    print(f"Actualizando configuración de actuador {actuator_id} para usuario {user_auth0_id}")
+    try:
+        conn = connector.get_con()
+        cur = conn.cursor()
+        
+        # 1) Verificar que el actuador existe y pertenece a un invernadero del usuario
+        cur.execute("""
+            SELECT a.id 
+            FROM actuators a
+            JOIN greenhouses g ON a.gh_id = g.id
+            WHERE a.id = ? AND g.owner_id = ?
+        """, (actuator_id, user_auth0_id))
+        
+        actuator = cur.fetchone()
+        
+        if not actuator:
+            conn.close()
+            raise HTTPException(status_code=403, 
+                detail="No tienes permiso para modificar este actuador o no existe")
+        
+        # 2) Actualizar el actuador con los nuevos datos
+        sql = """
+            UPDATE actuators 
+            SET name = ?, auto = ?, timer_on = ?, timer_off = ?, 
+                manual_status = ?, gh_id = ?
+            WHERE id = ?
+        """
+        
+        # Convertir booleanos a bits
+        auto_bit = 1 if actuator_data['auto'] else 0
+        manual_status_bit = 1 if actuator_data['manual_status'] else 0
+        
+        cur.execute(sql, (
+            actuator_data['name'],
+            auto_bit,
+            actuator_data['timer_on'],
+            actuator_data['timer_off'],
+            manual_status_bit,
+            actuator_data['gh_id'],
+            actuator_id
+        ))
+        
+        # Verificar si se modificó alguna fila
+        if cur.rowcount == 0:
+            conn.close()
+            raise HTTPException(status_code=404, detail="Actuador no encontrado")
+        
+        # Confirmar cambios
+        conn.commit()
+        conn.close()
+        
+        return {
+            "id": actuator_id,
+            "message": "Actuador actualizado exitosamente",
+            "actuator": {
+                "id": actuator_id,
+                "name": actuator_data['name'],
+                "auto": actuator_data['auto'],
+                "timer_on": actuator_data['timer_on'],
+                "timer_off": actuator_data['timer_off'],
+                "manual_status": actuator_data['manual_status'],
+                "gh_id": actuator_data['gh_id']
+            }
+        }
+        
+    except mariadb.Error as e:
+        print(f"Error al actualizar configuración: {e}")
+        raise HTTPException(status_code=500, detail=f"Error al actualizar configuración: {str(e)}")
 """
     ROUTER ENDPOINTS
 """
@@ -135,3 +203,25 @@ async def create_actuator_config(
         )
     
     return create_ghconfig(user_auth0_id, actuator_data)
+
+@router.put("/ghconfig/{actuator_id}")
+async def update_actuator_config(
+    actuator_id: int,
+    actuator_data: dict, 
+    user_auth0_id: str = Header(..., alias="UserAuth")
+):
+    # Validación básica de datos
+    required_fields = ['name', 'gh_id', 'auto', 'timer_on', 'timer_off', 'manual_status']
+    for field in required_fields:
+        if field not in actuator_data:
+            raise HTTPException(status_code=400, detail=f"Campo requerido faltante: {field}")
+    
+    # Validar que el nombre del actuador sea uno de los valores permitidos
+    allowed_names = ['pump', 'fan', 'light', 'oxigen']
+    if actuator_data['name'] not in allowed_names:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Nombre de actuador inválido. Valores permitidos: {', '.join(allowed_names)}"
+        )
+    
+    return update_ghconfig(user_auth0_id, actuator_id, actuator_data)

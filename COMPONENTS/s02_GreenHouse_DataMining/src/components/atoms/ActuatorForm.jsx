@@ -21,20 +21,22 @@ export default function ActuatorForm({ children }) {
     const fetchGreenhouses = async () => {
       if (!isAuthenticated) return;
       try {
-        const token = await getAccessTokenSilently();
         const sub = user.sub;
         const res = await fetch(
           `${import.meta.env.VITE_DDBB_API_IP}/db/gh/`,
           {
             method: 'GET',
             headers: {
-              'Authorization': `Bearer ${token}`,
-              'UserAuth': sub,
+            'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
+            'UserAuth': `${sub}`,
             },
           }
         );
         const data = await res.json();
-        setGreenhouses(data.ghs || []);
+        if (data.greenhouses.length > 0) {
+            setGreenhouses(data.greenhouses);
+            setSelectedGhId(data.greenhouses[0].name);
+        }
       } catch (err) {
         console.error('Error fetching greenhouses:', err);
       }
@@ -47,15 +49,14 @@ export default function ActuatorForm({ children }) {
     const fetchConfigs = async () => {
       if (!isAuthenticated || !selectedGhId) return;
       try {
-        const token = await getAccessTokenSilently();
         const sub = user.sub;
         const res = await fetch(
-          `${import.meta.env.VITE_DDBB_API_IP}/db/actuators?gh_id=${selectedGhId}`,
+          `${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig`,
           {
             method: 'GET',
             headers: {
-              'Authorization': `Bearer ${token}`,
-              'UserAuth': sub,
+                'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
+                'UserAuth': `${sub}`,
             },
           }
         );
@@ -88,7 +89,7 @@ export default function ActuatorForm({ children }) {
       const existing = configs[typeKey];
       const method = existing?.id ? 'PUT' : 'POST';
       const url = existing?.id
-        ? `${import.meta.env.VITE_DDBB_API_IP}/db/actuators/${existing.id}`
+        ? `${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/${existing.id}`
         : `${import.meta.env.VITE_DDBB_API_IP}/db/actuators`;
 
       const res = await fetch(url, {
