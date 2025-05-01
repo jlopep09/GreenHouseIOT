@@ -48,18 +48,18 @@ export default function ActuatorForm({ children }) {
   useEffect(() => {
     const fetchConfigs = async () => {
       if (!isAuthenticated || !selectedGhId) return;
+      console.log(`fetch to ${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/`, err);
       try {
         const sub = user.sub;
-        const res = await fetch(
-          `${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig`,
-          {
-            method: 'GET',
-            headers: {
+        const res = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/`,
+            {
+              method: 'GET',
+              headers: {
                 'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
                 'UserAuth': `${sub}`,
             },
-          }
-        );
+            }
+          );
         const result = await res.json();
         const map = {};
         result.configs?.forEach(c => { map[c.name] = c; });
