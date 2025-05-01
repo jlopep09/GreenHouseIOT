@@ -35,7 +35,7 @@ export default function ActuatorForm({ children }) {
         const data = await res.json();
         if (data.greenhouses.length > 0) {
             setGreenhouses(data.greenhouses);
-            setSelectedGhId(data.greenhouses[0].name);
+            setSelectedGhId(data.greenhouses[0].id);
         }
       } catch (err) {
         console.error('Error fetching greenhouses:', err);
@@ -84,7 +84,6 @@ export default function ActuatorForm({ children }) {
     };
 
     try {
-      const token = await getAccessTokenSilently();
       const sub = user.sub;
       const existing = configs[typeKey];
       const method = existing?.id ? 'PUT' : 'POST';
