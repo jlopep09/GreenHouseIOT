@@ -18,7 +18,7 @@ export default function AddNewGH({children}) {
             {isOpen && (
                 <dialog className="modal modal-open">
                     <div className="modal-box">
-                        <h3 className="font-bold text-lg">Nuevo invernadero</h3>
+                        <h3 className="font-bold text-lg">Nueva configuración</h3>
                         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
                             <input type="text" placeholder="Nombre" className="input input-bordered w-full" required />
                             <input type="text" placeholder="Ip 192.168.1.201" className="input input-bordered w-full" required />

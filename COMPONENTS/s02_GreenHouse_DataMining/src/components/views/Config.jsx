@@ -1,6 +1,7 @@
 import Navbar from '../overlay/Navbar';
 import Devicebar from '../overlay/Devicebar';
 import Sidebar from '../overlay/Sidebar';
+import ActuatorForm from '../atoms/ActuatorForm';
 
 
 
@@ -14,6 +15,9 @@ export default function Config() {
                     {/* Page content here */}
                     <Navbar/>
                     <Devicebar/>
+                    <ActuatorForm>
+                        <p>Config</p>
+                    </ActuatorForm>
                 </div>
                 <Sidebar/>
             </div>
