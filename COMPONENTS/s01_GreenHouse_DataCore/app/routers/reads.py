@@ -145,7 +145,7 @@ def update_ghconfig(user_auth0_id: str, actuator_id: int, actuator_data: dict):
         # Verificar si se modificó alguna fila
         if cur.rowcount == 0:
             conn.close()
-            raise HTTPException(status_code=404, detail="Actuador no encontrado")
+            raise HTTPException(status_code=304, detail="No se han modificado los datos. Puede que la configuración ya estuviese guardada.")
         
         # Confirmar cambios
         conn.commit()
