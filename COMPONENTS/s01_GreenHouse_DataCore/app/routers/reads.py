@@ -5,35 +5,64 @@ import mariadb
 
 router = APIRouter(tags=["MariaDB"],prefix="/db")
 
-def get_ghconfigs(user_auth0_id:str):
-    print("Obteniendo configuraciones de gh del userautid ")
-    print(user_auth0_id)
+
+def get_ghconfigs(user_auth0_id: str):
+    """
+    Recupera las configuraciones de actuadores de todos los invernaderos
+    pertenecientes al usuario, normalizando los campos BIT a enteros 0/1.
+    """
+    print("Obteniendo configuraciones de gh del userauth0_id:", user_auth0_id)
     configs = []
     try:
         conn = connector.get_con()
         cur = conn.cursor()
+
         # 1) Recuperar los IDs de los invernaderos de este usuario
-        cur.execute("SELECT id FROM greenhouses WHERE owner_id = ?", (user_auth0_id,))
+        cur.execute(
+            "SELECT id FROM greenhouses WHERE owner_id = ?",
+            (user_auth0_id,)
+        )
         gh_ids = [row[0] for row in cur.fetchall()]
+
         # Si no tiene invernaderos, devolvemos lista vacía
         if not gh_ids:
             conn.close()
             return {"configs": []}
+
         # 2) Construir la consulta dinámica con placeholders para IN (...)
         placeholders = ",".join(["?"] * len(gh_ids))
         sql = f"SELECT * FROM actuators WHERE gh_id IN ({placeholders})"
         cur.execute(sql, gh_ids)
 
-        # 3) Mapear columnas a diccionarios
+        # 3) Mapear columnas a diccionarios y normalizar campos BIT
         columns = [col[0] for col in cur.description]
         for row in cur.fetchall():
-            configs.append(dict(zip(columns, row)))
+            cfg = dict(zip(columns, row))
+
+            # Normalizar 'auto'
+            raw_auto = cfg.get('auto')
+            if isinstance(raw_auto, (bytes, bytearray)):
+                cfg['auto'] = int.from_bytes(raw_auto, 'little')
+            elif isinstance(raw_auto, str) and len(raw_auto) == 1:
+                cfg['auto'] = ord(raw_auto)
+
+            # Normalizar 'manual_status'
+            raw_manual = cfg.get('manual_status')
+            if isinstance(raw_manual, (bytes, bytearray)):
+                cfg['manual_status'] = int.from_bytes(raw_manual, 'little')
+            elif isinstance(raw_manual, str) and len(raw_manual) == 1:
+                cfg['manual_status'] = ord(raw_manual)
+
+            configs.append(cfg)
+
         conn.close()
         return {"configs": configs}
 
     except mariadb.Error as e:
         print(f"Error retrieving configs for user {user_auth0_id}: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve reads")
+        raise HTTPException(status_code=500, detail="Failed to retrieve configs")
+
+
 def create_ghconfig(user_auth0_id: str, actuator_data: dict):
     print(f"Creando nueva configuración de actuador para usuario {user_auth0_id}")
     try:
