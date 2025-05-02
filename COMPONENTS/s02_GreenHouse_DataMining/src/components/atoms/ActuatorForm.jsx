@@ -125,7 +125,7 @@ export default function ActuatorForm({ children }) {
             <FormGhSelector setSelectedGhId={setSelectedGhId} selectedGhId={selectedGhId} greenhouses={greenhouses}></FormGhSelector>
 
             {/* Formularios de actuadores */}
-            {(!selectedGhId) && ACTUATOR_TYPES.map(({ key, label }) => (
+            {(selectedGhId) && ACTUATOR_TYPES.map(({ key, label }) => (
               <FormTemplate 
                 key={key} 
                 keyValue={key} 
