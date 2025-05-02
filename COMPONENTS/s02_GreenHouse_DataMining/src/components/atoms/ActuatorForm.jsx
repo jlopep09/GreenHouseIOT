@@ -182,26 +182,67 @@ export const FormCloseButton = ({setIsOpen}) => {
 export const FormTemplate = ({keyValue, label, handleSubmit, configs, setIsOpen}) => {
   const cfg = configs[keyValue] || {};
   
+  // Estado para controlar modo (auto o manual)
+  const [isAuto, setIsAuto] = useState(cfg.auto === 1);
+  
+  // Efecto para establecer el valor predeterminado cuando cambia la configuración
+  useEffect(() => {
+    if (cfg.auto === 1) {
+      setIsAuto(true);
+    } else {
+      setIsAuto(false);
+    }
+  }, [cfg]);
+  
   // Convertir los valores de timer_on y timer_off de segundos a formato HH:MM
   const timeOn = secondsToTimeString(cfg.timer_on) || '09:00';
   const timeOff = secondsToTimeString(cfg.timer_off) || '14:00';
   
+  // Función personalizada para manejar el envío del formulario
+  const onSubmit = (e) => {
+    e.preventDefault();
+    
+    // Crear un nuevo evento con los valores correctos
+    const newEvent = {
+      ...e,
+      target: {
+        ...e.target,
+        auto: { checked: isAuto },
+        manual_status: { checked: !isAuto }
+      }
+    };
+    
+    handleSubmit(newEvent, keyValue);
+  };
+  
   return (
-    <form key={keyValue} onSubmit={e => handleSubmit(e, keyValue)} className="mb-6">
+    <form key={keyValue} onSubmit={onSubmit} className="mb-6">
       <h3 className="font-semibold text-lg mb-2">{label}</h3>
       <div className="grid grid-cols-2 gap-4 items-end">
         <div>
-          <label className="label">
+          <label className="label cursor-pointer">
             <span className="label-text">Auto</span>
+            <input 
+              type="checkbox" 
+              name="auto" 
+              checked={isAuto}
+              onChange={() => setIsAuto(true)}
+              className="checkbox" 
+            />
           </label>
-          <input type="checkbox" name="auto" defaultChecked={cfg.auto === 1} className="checkbox" />
         </div>
 
         <div>
-          <label className="label">
+          <label className="label cursor-pointer">
             <span className="label-text">Manual</span>
+            <input 
+              type="checkbox" 
+              name="manual_status" 
+              checked={!isAuto}
+              onChange={() => setIsAuto(false)}
+              className="checkbox" 
+            />
           </label>
-          <input type="checkbox" name="manual_status" defaultChecked={cfg.manual_status === 1} className="checkbox" />
         </div>
 
         <div>
@@ -225,7 +266,7 @@ export const FormTemplate = ({keyValue, label, handleSubmit, configs, setIsOpen}
       </div>
     </form>
   );
-}
+};
 // Función para convertir segundos desde medianoche a formato HH:MM
 const secondsToTimeString = (seconds) => {
   if (!seconds && seconds !== 0) return null;
