@@ -122,7 +122,25 @@ export default function ActuatorForm({ children }) {
             <h2 className="font-bold text-xl mb-4">Configurar Actuadores</h2>
 
             {/* Selector de invernadero */}
-            <div className="mb-4">
+            <FormGhSelector setSelectedGhId={setSelectedGhId} selectedGhId={selectedGhId} greenhouses={greenhouses}></FormGhSelector>
+
+            {/* Formularios de actuadores */}
+            {(selectedGhId) && ACTUATOR_TYPES.map(({ key, label }) => {
+              return (<FormTemplate key={key} label={label} handleSubmit={handleSubmit} configs={configs}/>)
+            })}
+
+            <FormCloseButton setIsOpen={setIsOpen}/>
+          </div>
+        </dialog>
+      )}
+    </>
+  );
+}
+
+
+export const FormGhSelector = ({setSelectedGhId,selectedGhId, greenhouses}) => {
+  return (
+    <div className="mb-4">
               <label className="label">
                 <span className="label-text">Invernadero</span>
               </label>
@@ -136,56 +154,58 @@ export default function ActuatorForm({ children }) {
                   <option key={gh.id} value={gh.id}>{gh.name}</option>
                 ))}
               </select>
-            </div>
+     </div>
+  )
+}
 
-            {/* Formularios de actuadores */}
-            {selectedGhId && ACTUATOR_TYPES.map(({ key, label }) => {
-              const cfg = configs[key] || {};
-              return (
-                <form key={key} onSubmit={e => handleSubmit(e, key)} className="mb-6">
-                  <h3 className="font-semibold text-lg mb-2">{label}</h3>
-                  <div className="grid grid-cols-2 gap-4 items-end">
-                    <div>
-                      <label className="label">
-                        <span className="label-text">Auto</span>
-                      </label>
-                      <input type="checkbox" name="auto" defaultChecked={cfg.auto === 1} className="checkbox" />
-                    </div>
 
-                    <div>
-                      <label className="label">
-                        <span className="label-text">Manual</span>
-                      </label>
-                      <input type="checkbox" name="manual_status" defaultChecked={cfg.manual_status === 1} className="checkbox" />
-                    </div>
+export const FormCloseButton = ({setIsOpen}) => {
+  return (
+    <button className="btn btn-sm absolute right-2 top-2" onClick={() => setIsOpen(false)}>✕</button>
+  )
+}
 
-                    <div>
-                      <label className="label">
-                        <span className="label-text">Hora On</span>
-                      </label>
-                      <input type="time" name="timer_on" defaultValue={cfg.timer_on || '09:00'} className="input input-bordered" />
-                    </div>
+export const FormTemplate = ({key, label, handleSubmit, configs}) => {
+  const cfg = configs[key] || {};
+  return (
+    <form key={key} onSubmit={e => handleSubmit(e, key)} className="mb-6">
+      <h3 className="font-semibold text-lg mb-2">{label}</h3>
+      <div className="grid grid-cols-2 gap-4 items-end">
+        <div>
+          <label className="label">
+            <span className="label-text">Auto</span>
+          </label>
+          <input type="checkbox" name="auto" defaultChecked={cfg.auto === 1} className="checkbox" />
+        </div>
 
-                    <div>
-                      <label className="label">
-                        <span className="label-text">Hora Off</span>
-                      </label>
-                      <input type="time" name="timer_off" defaultValue={cfg.timer_off || '14:00'} className="input input-bordered" />
-                    </div>
-                  </div>
+        <div>
+          <label className="label">
+            <span className="label-text">Manual</span>
+          </label>
+          <input type="checkbox" name="manual_status" defaultChecked={cfg.manual_status === 1} className="checkbox" />
+        </div>
 
-                  <div className="flex justify-end gap-2 mt-4">
-                    <button type="button" className="btn" onClick={() => setIsOpen(false)}>Cancelar</button>
-                    <button type="submit" className="btn btn-primary">Guardar {label}</button>
-                  </div>
-                </form>
-              );
-            })}
+        <div>
+          <label className="label">
+            <span className="label-text">Hora On</span>
+          </label>
+          <input type="time" name="timer_on" defaultValue={cfg.timer_on || '09:00'} className="input input-bordered" />
+          {console.log(`cfg.timer_on ${cfg.timer_on}`)}
+        </div>
 
-            <button className="btn btn-sm absolute right-2 top-2" onClick={() => setIsOpen(false)}>✕</button>
-          </div>
-        </dialog>
-      )}
-    </>
+        <div>
+          <label className="label">
+            <span className="label-text">Hora Off</span>
+          </label>
+          <input type="time" name="timer_off" defaultValue={cfg.timer_off || '14:00'} className="input input-bordered" />
+          {console.log(`cfg.timer_off ${cfg.timer_off}`)}
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-2 mt-4">
+        <button type="button" className="btn" onClick={() => setIsOpen(false)}>Cancelar</button>
+        <button type="submit" className="btn btn-primary">Guardar {label}</button>
+      </div>
+    </form>
   );
 }
