@@ -186,7 +186,6 @@ export const TableCardContent = ({latestRead, title, readKey}) => {
   
   const cfg = configs[readKey] || {};
   console.log(`cfg cargado para la key` ,readKey,` dando resultado a `,cfg)
-  const [mode, setMode] = useState(cfg.auto === 1 ? 'auto' : 'manual');
   return (
     <>
       <strong className="m-2">{title}</strong>
@@ -196,15 +195,26 @@ export const TableCardContent = ({latestRead, title, readKey}) => {
           (latestRead?.light_level === 'True' || latestRead?.light_level === 'False')
               ? (latestRead?.light_level === 'True' ? 'On' : 'Off') : '-'
           }</TableRow>
-        <TableRow title={"Modo auto:"}>{(cfg.auto === 1 ||cfg.auto === 0)?((mode === 'auto')? 'Activado' : 'Desactivado'):"-"}</TableRow>
-        <TableRow title={"Hora de encendido:"}>{(cfg.auto === 1 ||cfg.auto === 0)?cfg.timer_on:"-"}</TableRow>
-        <TableRow title={"Hora de apagado:"}>{(cfg.auto === 1 ||cfg.auto === 0)?cfg.timer_off:"-"}</TableRow>
+        <TableRow title={"Modo auto:"}>{(cfg.auto === 1 ||cfg.auto === 0)?((cfg.auto === 1)? 'Activado' : 'Desactivado'):"-"}</TableRow>
+        <TableRow title={"Hora de encendido:"}>{(cfg.auto === 1 ||cfg.auto === 0)?secondsToTimeString(cfg.timer_on):"-"}</TableRow>
+        <TableRow title={"Hora de apagado:"}>{(cfg.auto === 1 ||cfg.auto === 0)?secondsToTimeString(cfg.timer_off):"-"}</TableRow>
         
       </div>
 
     </>
   )
 }
+const secondsToTimeString = (seconds) => {
+  if (!seconds && seconds !== 0) return null;
+  
+  // Asegurarse de que seconds sea un número
+  const totalSeconds = parseInt(seconds, 10);
+  
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+};
 export const WaterCardContent = ({latestRead}) => {
   return (
     <>
