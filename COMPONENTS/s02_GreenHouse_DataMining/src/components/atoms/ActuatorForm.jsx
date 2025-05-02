@@ -27,39 +27,38 @@ export default function ActuatorForm({ children }) {
           {
             method: 'GET',
             headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
-            'UserAuth': `${sub}`,
+              'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,
+              'UserAuth': `${sub}`,
             },
           }
         );
         const data = await res.json();
         if (data.greenhouses.length > 0) {
-            setGreenhouses(data.greenhouses);
-            setSelectedGhId(data.greenhouses[0].id);
+          setGreenhouses(data.greenhouses);
+          setSelectedGhId(data.greenhouses[0].id);
         }
       } catch (err) {
         console.error('Error fetching greenhouses:', err);
       }
-    };
-    fetchGreenhouses();
+    }; fetchGreenhouses();
   }, [isAuthenticated, getAccessTokenSilently, user]);
 
   // Fetch configs cuando cambie el invernadero seleccionado
   useEffect(() => {
     const fetchConfigs = async () => {
       if (!isAuthenticated || !selectedGhId) return;
-      console.log(`fetch to ${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/`);
       try {
         const sub = user.sub;
-        const res = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/`,
-            {
-              method: 'GET',
-              headers: {
-                'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
-                'UserAuth': `${sub}`,
+        const res = await fetch(
+          `${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/`,
+          {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,
+              'UserAuth': `${sub}`,
             },
-            }
-          );
+          }
+        );
         const result = await res.json();
         const map = {};
         result.configs?.forEach(c => { map[c.name] = c; });
@@ -67,8 +66,7 @@ export default function ActuatorForm({ children }) {
       } catch (err) {
         console.error('Error fetching actuator configs:', err);
       }
-    };
-    fetchConfigs();
+    }; fetchConfigs();
   }, [isAuthenticated, getAccessTokenSilently, selectedGhId, user]);
 
   const handleSubmit = async (evt, typeKey) => {
@@ -95,7 +93,7 @@ export default function ActuatorForm({ children }) {
         method,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
+          'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,
           'UserAuth': `${sub}`,
         },
         body: JSON.stringify(payload),
@@ -121,15 +119,23 @@ export default function ActuatorForm({ children }) {
           <div className="modal-box max-w-lg">
             <h2 className="font-bold text-xl mb-4">Configurar Actuadores</h2>
 
-            {/* Selector de invernadero */}
-            <FormGhSelector setSelectedGhId={setSelectedGhId} selectedGhId={selectedGhId} greenhouses={greenhouses}></FormGhSelector>
+            <FormGhSelector
+              setSelectedGhId={setSelectedGhId}
+              selectedGhId={selectedGhId}
+              greenhouses={greenhouses}
+            />
 
-            {/* Formularios de actuadores */}
-            {(selectedGhId) && ACTUATOR_TYPES.map(({ key, label }) => {
-              return (<FormTemplate key={key} label={label} handleSubmit={handleSubmit} configs={configs}/>)
-            })}
+            {selectedGhId && ACTUATOR_TYPES.map(({ key, label }) => (
+              <FormTemplate
+                key={key}
+                typeKey={key}
+                label={label}
+                handleSubmit={handleSubmit}
+                configs={configs}
+              />
+            ))}
 
-            <FormCloseButton setIsOpen={setIsOpen}/>
+            <FormCloseButton setIsOpen={setIsOpen} />
           </div>
         </dialog>
       )}
@@ -137,68 +143,80 @@ export default function ActuatorForm({ children }) {
   );
 }
 
+export const FormGhSelector = ({ setSelectedGhId, selectedGhId, greenhouses }) => (
+  <div className="mb-4">
+    <label className="label">
+      <span className="label-text">Invernadero</span>
+    </label>
+    <select
+      className="select select-bordered w-full"
+      value={selectedGhId || ''}
+      onChange={e => setSelectedGhId(e.target.value)}
+    >
+      <option value="" disabled>Seleccione un invernadero</option>
+      {greenhouses.map(gh => (
+        <option key={gh.id} value={gh.id}>{gh.name}</option>
+      ))}
+    </select>
+  </div>
+);
 
-export const FormGhSelector = ({setSelectedGhId,selectedGhId, greenhouses}) => {
+export const FormCloseButton = ({ setIsOpen }) => (
+  <button className="btn btn-sm absolute right-2 top-2" onClick={() => setIsOpen(false)}>✕</button>
+);
+
+export const FormTemplate = ({ typeKey, label, handleSubmit, configs }) => {
+  const cfg = configs[typeKey] || {};
   return (
-    <div className="mb-4">
-              <label className="label">
-                <span className="label-text">Invernadero</span>
-              </label>
-              <select
-                className="select select-bordered w-full"
-                value={selectedGhId || ''}
-                onChange={e => setSelectedGhId(e.target.value)}
-              >
-                <option value="" disabled>Seleccione un invernadero</option>
-                {greenhouses.map(gh => (
-                  <option key={gh.id} value={gh.id}>{gh.name}</option>
-                ))}
-              </select>
-     </div>
-  )
-}
-
-
-export const FormCloseButton = ({setIsOpen}) => {
-  return (
-    <button className="btn btn-sm absolute right-2 top-2" onClick={() => setIsOpen(false)}>✕</button>
-  )
-}
-
-export const FormTemplate = ({key_value, label, handleSubmit, configs}) => {
-  const cfg = configs[key_value] || {};
-  return (
-    <form key={key_value} onSubmit={e => handleSubmit(e, key_value)} className="mb-6">
+    <form onSubmit={e => handleSubmit(e, typeKey)} className="mb-6">
       <h3 className="font-semibold text-lg mb-2">{label}</h3>
       <div className="grid grid-cols-2 gap-4 items-end">
         <div>
           <label className="label">
             <span className="label-text">Auto</span>
           </label>
-          <input type="checkbox" name="auto" defaultChecked={cfg.auto === 1} className="checkbox" />
+          <input
+            type="checkbox"
+            name="auto"
+            defaultChecked={cfg.auto === 1}
+            className="checkbox"
+          />
         </div>
 
         <div>
           <label className="label">
             <span className="label-text">Manual</span>
           </label>
-          <input type="checkbox" name="manual_status" defaultChecked={cfg.manual_status === 1} className="checkbox" />
+          <input
+            type="checkbox"
+            name="manual_status"
+            defaultChecked={cfg.manual_status === 1}
+            className="checkbox"
+          />
         </div>
 
         <div>
           <label className="label">
             <span className="label-text">Hora On</span>
           </label>
-          <input type="time" name="timer_on" defaultValue={cfg.timer_on || '09:00'} className="input input-bordered" />
-          {console.log(`cfg.timer_on ${cfg.timer_on}`)}
+          <input
+            type="time"
+            name="timer_on"
+            defaultValue={cfg.timer_on ? cfg.timer_on.slice(0,5) : '09:00'}
+            className="input input-bordered"
+          />
         </div>
 
         <div>
           <label className="label">
             <span className="label-text">Hora Off</span>
           </label>
-          <input type="time" name="timer_off" defaultValue={cfg.timer_off || '14:00'} className="input input-bordered" />
-          {console.log(`cfg.timer_off ${cfg.timer_off}`)}
+          <input
+            type="time"
+            name="timer_off"
+            defaultValue={cfg.timer_off ? cfg.timer_off.slice(0,5) : '14:00'}
+            className="input input-bordered"
+          />
         </div>
       </div>
 
@@ -208,4 +226,4 @@ export const FormTemplate = ({key_value, label, handleSubmit, configs}) => {
       </div>
     </form>
   );
-}
+};
