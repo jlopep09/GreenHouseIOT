@@ -176,7 +176,6 @@ export const TableCardContent = ({latestRead, title, readKey}) => {
             const map = {};
             result.configs?.forEach(c => { map[c.name] = c; });
             setConfigs(map);
-            console.log(`configs actualizadas `,configs)
           } catch (err) {
             console.error('Error fetching actuator configs:', err);
           }
@@ -185,11 +184,9 @@ export const TableCardContent = ({latestRead, title, readKey}) => {
       }, [isAuthenticated, getAccessTokenSilently, selectedGhId, user]);
   
   const cfg = configs[readKey] || {};
-  console.log(`cfg cargado para la key` ,readKey,` dando resultado a `,cfg)
   return (
     <>
       <strong className="m-2">{title}</strong>
-      {console.log(`renderizando cfg `, cfg)}
       <div className='min-w-4xs h-full'>
         <TableRow title={"Estado actual:"}>{
           (latestRead?.light_level === 'True' || latestRead?.light_level === 'False')
