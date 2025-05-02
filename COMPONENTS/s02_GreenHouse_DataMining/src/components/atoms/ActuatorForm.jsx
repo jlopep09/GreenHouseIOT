@@ -179,6 +179,7 @@ export const FormCloseButton = ({setIsOpen}) => {
   )
 }
 
+
 export const FormTemplate = ({keyValue, label, handleSubmit, configs, setIsOpen}) => {
   const cfg = configs[keyValue] || {};
   
@@ -198,21 +199,20 @@ export const FormTemplate = ({keyValue, label, handleSubmit, configs, setIsOpen}
   const timeOn = secondsToTimeString(cfg.timer_on) || '09:00';
   const timeOff = secondsToTimeString(cfg.timer_off) || '14:00';
   
+  // Referencias para acceder a los elementos del formulario directamente
+  const autoRef = useRef(null);
+  const manualRef = useRef(null);
+  
   // Función personalizada para manejar el envío del formulario
   const onSubmit = (e) => {
     e.preventDefault();
     
-    // Crear un nuevo evento con los valores correctos
-    const newEvent = {
-      ...e,
-      target: {
-        ...e.target,
-        auto: { checked: isAuto },
-        manual_status: { checked: !isAuto }
-      }
-    };
+    // Modificamos los campos de checkbox directamente antes de llamar a handleSubmit
+    if (autoRef.current) autoRef.current.checked = isAuto;
+    if (manualRef.current) manualRef.current.checked = !isAuto;
     
-    handleSubmit(newEvent, keyValue);
+    // Usamos el evento original
+    handleSubmit(e, keyValue);
   };
   
   return (
@@ -225,6 +225,7 @@ export const FormTemplate = ({keyValue, label, handleSubmit, configs, setIsOpen}
             <input 
               type="checkbox" 
               name="auto" 
+              ref={autoRef}
               checked={isAuto}
               onChange={() => setIsAuto(true)}
               className="checkbox" 
@@ -238,6 +239,7 @@ export const FormTemplate = ({keyValue, label, handleSubmit, configs, setIsOpen}
             <input 
               type="checkbox" 
               name="manual_status" 
+              ref={manualRef}
               checked={!isAuto}
               onChange={() => setIsAuto(false)}
               className="checkbox" 
@@ -267,6 +269,8 @@ export const FormTemplate = ({keyValue, label, handleSubmit, configs, setIsOpen}
     </form>
   );
 };
+
+
 // Función para convertir segundos desde medianoche a formato HH:MM
 const secondsToTimeString = (seconds) => {
   if (!seconds && seconds !== 0) return null;
