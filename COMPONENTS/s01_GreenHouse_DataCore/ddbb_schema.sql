@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `actuators` (
   PRIMARY KEY (`id`),
   KEY `FK_actuators_gh_id` (`gh_id`),
   CONSTRAINT `FK_actuators_gh_id` FOREIGN KEY (`gh_id`) REFERENCES `greenhouses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_spanish_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_spanish_ai_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -43,12 +43,14 @@ CREATE TABLE IF NOT EXISTS `greenhouses` (
   `description` varchar(150) DEFAULT '',
   `image` mediumblob DEFAULT NULL,
   `ip` varchar(50) NOT NULL DEFAULT '0.0.0.0',
-  `owner_id` varchar(255) NOT NULL,
+  `owner_id` varchar(255) DEFAULT NULL,
+  `sync_code` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   KEY `FK1_owner` (`owner_id`),
+  KEY `sync_code` (`sync_code`),
   CONSTRAINT `FK1_owner` FOREIGN KEY (`owner_id`) REFERENCES `users` (`auth0_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_spanish_ai_cs;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_spanish_ai_cs;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -89,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `sensor_reads` (
   `gh_id` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `gh_id` (`gh_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1719 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1722 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -103,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `profile_img_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_spanish_ai_cs DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth0_id` (`auth0_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_spanish_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_spanish_ai_ci;
 
 -- La exportación de datos fue deseleccionada.
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth0 } from "@auth0/auth0-react"; 
 import { Link } from 'react-router';
-import Linechart from '../charts/Linechart';
+import MiniLineChart from '../charts/MiniLineChart';
 
 const ContentCard = ({ children }) => (
     <div className="card bg-base-200 shadow-sm min-h-60 col-span-1 p-4">
@@ -73,8 +73,8 @@ const ContentCard = ({ children }) => (
         <ContentCard>
         <section className='card bg-base-200 flex flex-col justify-center'>
         <strong className="w-full text-center">Temperatura del aire</strong>
-          <Linechart chartWidth={200}></Linechart>
-          <button className='btn btn-link'>Ampliar</button>
+          <MiniLineChart chartWidth={200} metric='temperature'></MiniLineChart>
+          <Link to={"/params"}><p className='btn btn-link flex align-middle justify-center items-center'>Ampliar</p></Link>
         </section>
         
         
@@ -83,8 +83,8 @@ const ContentCard = ({ children }) => (
         <ContentCard>
         <section className='card bg-base-200 flex flex-col justify-center'>
         <strong className="w-full text-center">Temperatura del agua</strong>
-          <Linechart chartWidth={200}></Linechart>
-          <button className='btn btn-link'>Ampliar</button>
+          <MiniLineChart chartWidth={200} metric='water_temperature'></MiniLineChart>
+          <Link to={"/params"}><p className='btn btn-link flex align-middle justify-center items-center'>Ampliar</p></Link>
         </section>
         
         
