@@ -183,9 +183,10 @@ export const TableCardContent = ({latestRead, title, readKey}) => {
         };
         fetchConfigs();
       }, [isAuthenticated, getAccessTokenSilently, selectedGhId, user]);
-  const [mode, setMode] = useState(cfg.auto === 1 ? 'auto' : 'manual');
+  
   const cfg = configs[readKey] || {};
   console.log(`cfg cargado para la key ${readKey} dando resultado a ${cfg}`)
+  const [mode, setMode] = useState(cfg.auto === 1 ? 'auto' : 'manual');
   return (
     <>
       <strong className="m-2">{title}</strong>
