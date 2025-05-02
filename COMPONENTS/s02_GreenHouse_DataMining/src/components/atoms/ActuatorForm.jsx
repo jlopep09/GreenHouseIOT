@@ -48,7 +48,6 @@ export default function ActuatorForm({ children }) {
   useEffect(() => {
     const fetchConfigs = async () => {
       if (!isAuthenticated || !selectedGhId) return;
-      console.log(`fetch to ${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/`);
       try {
         const sub = user.sub;
         const res = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/`,
@@ -196,6 +195,7 @@ export const FormTemplate = ({keyValue, label, handleSubmit, configs, setIsOpen}
           <label className="label">
             <span className="label-text">Hora On</span>
           </label>
+          {console.log(`Timer on value ${cfg.timer_on}`)}
           <input type="time" name="timer_on" defaultValue={cfg.timer_on || '09:00'} className="input input-bordered" />
         </div>
 
@@ -203,6 +203,7 @@ export const FormTemplate = ({keyValue, label, handleSubmit, configs, setIsOpen}
           <label className="label">
             <span className="label-text">Hora Off</span>
           </label>
+          {console.log(`Timer off value ${cfg.timer_off}`)}
           <input type="time" name="timer_off" defaultValue={cfg.timer_off || '14:00'} className="input input-bordered" />
         </div>
       </div>
