@@ -166,7 +166,7 @@ def sync_greenhouse(name: str, sync_code: str, owner_id: str):
         cur = conn.cursor()
 
         # Verifica si el invernadero existe y obtiene el sync_code actual
-        cur.execute("SELECT id, sync_code FROM greenhouses WHERE name = ?", (name,))
+        cur.execute("SELECT id, sync_code, owner_id FROM greenhouses WHERE name = ?", (name,))
         result = cur.fetchone()
 
         if not result:
@@ -175,17 +175,17 @@ def sync_greenhouse(name: str, sync_code: str, owner_id: str):
                 detail=f"Greenhouse with name '{name}' not found"
             )
 
-        _, current_sync_code = result
+        _, current_sync_code, current_owner = result
 
         # Si ya tiene un sync_code asignado, lanza excepción
-        if current_sync_code:
+        if current_owner:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Greenhouse already synced"
             )
         if current_sync_code!=sync_code:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
+                status_code=status.HTTP_409_CONFLICT,
                 detail="Greenhouse sync code is not valid"
             )
 
