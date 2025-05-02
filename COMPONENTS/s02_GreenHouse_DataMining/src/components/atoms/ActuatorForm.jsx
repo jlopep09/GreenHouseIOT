@@ -73,15 +73,23 @@ export default function ActuatorForm({ children }) {
   const handleSubmit = async (evt, typeKey) => {
     evt.preventDefault();
     const form = evt.target;
+    
+    // Función para convertir formato HH:MM a segundos
+    const timeStringToSeconds = (timeString) => {
+      if (!timeString) return 0;
+      const [hours, minutes] = timeString.split(':').map(Number);
+      return hours * 3600 + minutes * 60;
+    };
+    
     const payload = {
       name: typeKey,
       gh_id: selectedGhId,
       auto: form.auto.checked ? 1 : 0,
       manual_status: form.manual_status.checked ? 1 : 0,
-      timer_on: form.timer_on.value,
-      timer_off: form.timer_off.value,
+      timer_on: timeStringToSeconds(form.timer_on.value), // Convertir HH:MM a segundos
+      timer_off: timeStringToSeconds(form.timer_off.value), // Convertir HH:MM a segundos
     };
-
+  
     try {
       const sub = user.sub;
       const existing = configs[typeKey];
@@ -89,7 +97,7 @@ export default function ActuatorForm({ children }) {
       const url = existing?.id
         ? `${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/${existing.id}`
         : `${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/`;
-
+  
       const res = await fetch(url, {
         method,
         headers: {
@@ -173,6 +181,11 @@ export const FormCloseButton = ({setIsOpen}) => {
 
 export const FormTemplate = ({keyValue, label, handleSubmit, configs, setIsOpen}) => {
   const cfg = configs[keyValue] || {};
+  
+  // Convertir los valores de timer_on y timer_off de segundos a formato HH:MM
+  const timeOn = secondsToTimeString(cfg.timer_on) || '09:00';
+  const timeOff = secondsToTimeString(cfg.timer_off) || '14:00';
+  
   return (
     <form key={keyValue} onSubmit={e => handleSubmit(e, keyValue)} className="mb-6">
       <h3 className="font-semibold text-lg mb-2">{label}</h3>
@@ -195,16 +208,14 @@ export const FormTemplate = ({keyValue, label, handleSubmit, configs, setIsOpen}
           <label className="label">
             <span className="label-text">Hora On</span>
           </label>
-          {console.log(`Timer on value ${cfg.timer_on}`)}
-          <input type="time" name="timer_on" defaultValue={cfg.timer_on || '09:00'} className="input input-bordered" />
+          <input type="time" name="timer_on" defaultValue={timeOn} className="input input-bordered" />
         </div>
 
         <div>
           <label className="label">
             <span className="label-text">Hora Off</span>
           </label>
-          {console.log(`Timer off value ${cfg.timer_off}`)}
-          <input type="time" name="timer_off" defaultValue={cfg.timer_off || '14:00'} className="input input-bordered" />
+          <input type="time" name="timer_off" defaultValue={timeOff} className="input input-bordered" />
         </div>
       </div>
 
@@ -215,3 +226,15 @@ export const FormTemplate = ({keyValue, label, handleSubmit, configs, setIsOpen}
     </form>
   );
 }
+// Función para convertir segundos desde medianoche a formato HH:MM
+const secondsToTimeString = (seconds) => {
+  if (!seconds && seconds !== 0) return null;
+  
+  // Asegurarse de que seconds sea un número
+  const totalSeconds = parseInt(seconds, 10);
+  
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+};
