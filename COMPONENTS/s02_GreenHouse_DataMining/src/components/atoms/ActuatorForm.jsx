@@ -185,7 +185,7 @@ export const FormTemplate = ({keyValue, label, handleSubmit, configs, setIsOpen}
   // Convertir los valores de timer_on y timer_off de segundos a formato HH:MM
   const timeOn = secondsToTimeString(cfg.timer_on) || '09:00';
   const timeOff = secondsToTimeString(cfg.timer_off) || '14:00';
-  
+  const [mode, setMode] = useState(cfg.auto === 1 ? 'auto' : 'manual');
   return (
     <form key={keyValue} onSubmit={e => handleSubmit(e, keyValue)} className="mb-6">
       <h3 className="font-semibold text-lg mb-2">{label}</h3>
@@ -194,14 +194,26 @@ export const FormTemplate = ({keyValue, label, handleSubmit, configs, setIsOpen}
           <label className="label">
             <span className="label-text">Auto</span>
           </label>
-          <input type="checkbox" name="auto" defaultChecked={cfg.auto === 1} className="checkbox" />
+          <input
+            type="checkbox"
+            name="auto"
+            checked={mode === 'auto'}
+            onChange={() => setMode('auto')}
+            className="checkbox"
+          />
         </div>
 
         <div>
           <label className="label">
             <span className="label-text">Manual</span>
           </label>
-          <input type="checkbox" name="manual_status" defaultChecked={cfg.manual_status === 1} className="checkbox" />
+          <input
+            type="checkbox"
+            name="manual_status"
+            checked={mode === 'manual'}
+            onChange={() => setMode('manual')}
+            className="checkbox"
+          />
         </div>
 
         <div>
