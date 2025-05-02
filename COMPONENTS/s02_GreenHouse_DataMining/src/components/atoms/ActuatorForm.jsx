@@ -86,8 +86,8 @@ export default function ActuatorForm({ children }) {
       gh_id: selectedGhId,
       auto: form.auto.checked ? 1 : 0,
       manual_status: form.manual_status.checked ? 1 : 0,
-      timer_on: timeStringToSeconds(form.timer_on.value), // Convertir HH:MM a segundos
-      timer_off: timeStringToSeconds(form.timer_off.value), // Convertir HH:MM a segundos
+      timer_on: form.timer_on.value, // Convertir HH:MM a segundos
+      timer_off: form.timer_on.value, // Convertir HH:MM a segundos
     };
   
     try {
