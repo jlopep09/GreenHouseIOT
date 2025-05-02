@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { Link } from 'react-router';
 
 export default function AddNewGH({ children }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -67,19 +68,23 @@ export default function AddNewGH({ children }) {
                 className="input input-bordered w-full"
                 required
               />
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Cancelar
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  Enviar
-                </button>
+              <div className="flex justify-between gap-2">
+                <Link to={"/help"}><p className='btn btn-link'>Guía de sincronización</p> </Link>
+                <div className='flex gap-2'>
+                    <button
+                    type="button"
+                    className="btn"
+                    onClick={() => setIsOpen(false)}
+                    >
+                    Cancelar
+                    </button>
+                    <button type="submit" className="btn btn-primary">
+                    Enviar
+                    </button>
+                </div>
               </div>
             </form>
+            
           </div>
         </dialog>
       )}
