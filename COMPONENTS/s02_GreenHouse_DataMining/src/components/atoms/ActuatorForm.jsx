@@ -165,10 +165,10 @@ export const FormCloseButton = ({setIsOpen}) => {
   )
 }
 
-export const FormTemplate = ({key, label, handleSubmit, configs}) => {
-  const cfg = configs[key] || {};
+export const FormTemplate = ({key_value, label, handleSubmit, configs}) => {
+  const cfg = configs[key_value] || {};
   return (
-    <form key={key} onSubmit={e => handleSubmit(e, key)} className="mb-6">
+    <form key={key_value} onSubmit={e => handleSubmit(e, key_value)} className="mb-6">
       <h3 className="font-semibold text-lg mb-2">{label}</h3>
       <div className="grid grid-cols-2 gap-4 items-end">
         <div>
