@@ -97,9 +97,10 @@ const ContentCard = ({ children }) => (
               <button className='btn btn-neutral font-bold w-full'>Luces</button>
           </div>
         </ContentCardLarge>
-        <ContentCard><TableCardContent latestRead={latestRead} title={"Luz"} readKey={"light_level"}/></ContentCard>
-        <ContentCard><TableCardContent latestRead={latestRead} title={"Ventiladores"} readKey={"light_level"}/></ContentCard>
-        
+        <ContentCard><TableCardContent latestRead={latestRead} title={"Luz"} readKey={"light"}/></ContentCard>
+        <ContentCard><TableCardContent latestRead={latestRead} title={"Ventiladores"} readKey={"fan"}/></ContentCard>
+        <ContentCard><TableCardContent latestRead={latestRead} title={"Bomba"} readKey={"pump"}/></ContentCard>
+        <ContentCard><TableCardContent latestRead={latestRead} title={"Oxigenador"} readKey={"oxigen"}/></ContentCard>
         {/* Aquí podrías agregar más ContentCardLarge con gráficas, formularios, etc. */}
       </div>
     );
@@ -123,6 +124,65 @@ export const TableRow = ({children, title}) => {
 
 }
 export const TableCardContent = ({latestRead, title, readKey}) => {
+    const { user, isAuthenticated, getAccessTokenSilently, isLoading } = useAuth0();
+  
+    const [greenhouses, setGreenhouses] = useState([]);
+    const [selectedGhId, setSelectedGhId] = useState(null);
+    const [configs, setConfigs] = useState({});
+    const cfg = configs[readKey] || {};
+      useEffect(() => {
+        const fetchGreenhouses = async () => {
+          if (!isAuthenticated) return;
+          try {
+            const sub = user.sub;
+            const res = await fetch(
+              `${import.meta.env.VITE_DDBB_API_IP}/db/gh/`,
+              {
+                method: 'GET',
+                headers: {
+                'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
+                'UserAuth': `${sub}`,
+                },
+              }
+            );
+            const data = await res.json();
+            if (data.greenhouses.length > 0) {
+                setGreenhouses(data.greenhouses);
+                setSelectedGhId(data.greenhouses[0].id);
+            }
+          } catch (err) {
+            console.error('Error fetching greenhouses:', err);
+          }
+        };
+        fetchGreenhouses();
+      }, [isAuthenticated, getAccessTokenSilently, user]);
+    
+      // Fetch configs cuando cambie el invernadero seleccionado
+      useEffect(() => {
+        const fetchConfigs = async () => {
+          if (!isAuthenticated || !selectedGhId) return;
+          try {
+            const sub = user.sub;
+            const res = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/`,
+                {
+                  method: 'GET',
+                  headers: {
+                    'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
+                    'UserAuth': `${sub}`,
+                },
+                }
+              );
+            const result = await res.json();
+            const map = {};
+            result.configs?.forEach(c => { map[c.name] = c; });
+            setConfigs(map);
+          } catch (err) {
+            console.error('Error fetching actuator configs:', err);
+          }
+        };
+        fetchConfigs();
+      }, [isAuthenticated, getAccessTokenSilently, selectedGhId, user]);
+  const [mode, setMode] = useState(cfg.auto === 1 ? 'auto' : 'manual');
   return (
     <>
       <strong className="m-2">{title}</strong>
@@ -132,18 +192,9 @@ export const TableCardContent = ({latestRead, title, readKey}) => {
           (latestRead?.light_level === 'True' || latestRead?.light_level === 'False')
               ? (latestRead?.light_level === 'True' ? 'On' : 'Off') : '-'
           }</TableRow>
-        <TableRow title={"Modo auto:"}>{
-          (latestRead?.readKey === 'True' || latestRead?.readKey === 'False')
-              ? (latestRead?.readKey === 'True' ? 'On' : 'Off') : '-'
-          }</TableRow>
-                  <TableRow title={"Hora de encendido:"}>{
-          (latestRead?.readKey === 'True' || latestRead?.readKey === 'False')
-              ? (latestRead?.readKey === 'True' ? 'On' : 'Off') : '-'
-          }</TableRow>
-                  <TableRow title={"Hora de apagado:"}>{
-          (latestRead?.readKey === 'True' || latestRead?.readKey === 'False')
-              ? (latestRead?.readKey === 'True' ? 'On' : 'Off') : '-'
-          }</TableRow>
+        <TableRow title={"Modo auto:"}>{(cfg.auto === 1 ||cfg.auto === 0)?((mode === 'auto')? 'Activado' : 'Desactivado'):"-"}</TableRow>
+        <TableRow title={"Hora de encendido:"}>{(cfg.auto === 1 ||cfg.auto === 0)?cfg.timer_on:"-"}</TableRow>
+        <TableRow title={"Hora de apagado:"}>{(cfg.auto === 1 ||cfg.auto === 0)?cfg.timer_off:"-"}</TableRow>
         
       </div>
 
