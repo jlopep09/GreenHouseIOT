@@ -28,7 +28,7 @@ async def consume_messages():
                     data = msg.value
                     print(f"Datos recibidos: {data}")
                     try:
-                        if(Detector.checkIP(data["gh_name"], data["gh_ip"])):
+                        if(Detector.checkIP(data["gh_name"], data["gh_ip"], data["sync_code"])):
                             raise Exception(detail="ERROR")   
                     except Exception as e:
                         print(f"gh ip changed! An error occurred while trying to update the gh ip. Recived read will be deleted. {e}")

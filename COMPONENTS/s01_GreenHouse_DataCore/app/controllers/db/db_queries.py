@@ -137,15 +137,15 @@ def get_greenhouse(id: int):
     except mariadb.Error as e:
         print(f"Error retrieving table information: {e}")
 
-def create_greenhouse( name: str, ip: str, description: str= None, image: bytes = None):
+def create_greenhouse( name: str, ip: str,sync_code: str, description: str= None, image: bytes = None):
     try:
         conn = connector.get_con()
         cur = conn.cursor()
         
         # Inserta un nuevo registro en la tabla `greenhouses`
         cur.execute(
-            "INSERT INTO greenhouses (name, description, image, ip) VALUES (?, ?, ?, ?)",
-            (name, description, image, ip)
+            "INSERT INTO greenhouses (name, description, image, ip, sync_code) VALUES (?, ?, ?, ?, ?)",
+            (name, description, image, ip, sync_code)
         )
         
         # Confirma los cambios
@@ -160,6 +160,55 @@ def create_greenhouse( name: str, ip: str, description: str= None, image: bytes 
         
     except mariadb.Error as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error creating greenhouse: {e}")
+def sync_greenhouse(name: str, sync_code: str, owner_id: str):
+    try:
+        conn = connector.get_con()
+        cur = conn.cursor()
+
+        # Verifica si el invernadero existe y obtiene el sync_code actual
+        cur.execute("SELECT id, sync_code FROM greenhouses WHERE name = ?", (name,))
+        result = cur.fetchone()
+
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Greenhouse with name '{name}' not found"
+            )
+
+        _, current_sync_code = result
+
+        # Si ya tiene un sync_code asignado, lanza excepción
+        if current_sync_code:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Greenhouse already synced"
+            )
+        if current_sync_code!=sync_code:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Greenhouse sync code is not valid"
+            )
+
+        # Si no tiene sync_code, actualiza el owner_id
+        cur.execute(
+            """
+            UPDATE greenhouses
+            SET owner_id = ?
+            WHERE name = ?
+            """,
+            (owner_id, name)
+        )
+
+        conn.commit()
+        conn.close()
+
+        return {"message": "Greenhouse updated successfully", "name": name}
+    
+    except Exception as e:
+        # Cierra conexión si algo sale mal
+        if conn:
+            conn.close()
+        raise e
     
 def update_greenhouse_ip(name: str, ip: str):
     try:

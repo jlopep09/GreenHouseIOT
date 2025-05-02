@@ -28,6 +28,7 @@ void getSensorData(String& jsonData) {
     int waterLevel     = analogRead(WATER_PIN);
 
     String gh_ip = WiFi.localIP().toString();
+    String sync_code = "GH12SHh9427Hla"
 
     // 1) Sensor DHT22
     if (isnan(temperature) || isnan(humidity)) {
@@ -63,6 +64,7 @@ void getSensorData(String& jsonData) {
     // Si todos los sensores dieron “lectura”, construimos el JSON
     jsonData  = "{";
     jsonData += "\"gh_name\":\""           + String(gh_name)            + "\",";
+    jsonData += "\"sync_code\":\""           + sync_code           + "\",";
     jsonData += "\"gh_ip\":\""             + gh_ip                      + "\",";
     jsonData += "\"temperature\":"         + String(temperature, 2)      + ",";
     jsonData += "\"humidity\":"            + String(humidity, 2)         + ",";

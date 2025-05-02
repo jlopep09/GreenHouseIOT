@@ -11,6 +11,10 @@ class GreenhouseRequest(BaseModel):
     description: Optional[str] = None
     image: Optional[bytes] = None
     ip: Optional[str] = None
+    sync_code: str
+class SyncGreenhouseRequest(BaseModel):
+    name: str
+    sync_code: str
 
 @router.get("/gh/")
 async def get_all_greenhouses_info(user_auth0_id: str = Header(..., alias="UserAuth")):
@@ -28,6 +32,16 @@ async def create_greenhouse(greenhouse: GreenhouseRequest):
         name=greenhouse.name,
         description=greenhouse.description,
         image=greenhouse.image,
-        ip=greenhouse.ip
+        ip=greenhouse.ip,
+        sync_code = greenhouse.sync_code
+    )
+    return response
+
+@router.post("/syncgh/")
+async def sync_greenhouse(greenhouse: SyncGreenhouseRequest, user_auth0_id: str = Header(..., alias="UserAuth")):
+    response = db_queries.sync_greenhouse(
+        name=greenhouse.name,
+        sync_code = greenhouse.sync_code,
+        owner_id= user_auth0_id
     )
     return response
