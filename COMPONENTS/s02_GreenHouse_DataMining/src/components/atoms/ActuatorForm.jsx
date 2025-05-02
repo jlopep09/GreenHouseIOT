@@ -107,6 +107,10 @@ export default function ActuatorForm({ children }) {
         },
         body: JSON.stringify(payload),
       });
+      if (res.status === 304) {
+        alert(`La configuración de ${typeKey} guardada`);
+        return;
+      }
       if (!res.ok) throw new Error(`Server responded ${res.status}`);
       const saved = await res.json();
       alert(`Configuración de ${typeKey} guardada`);
