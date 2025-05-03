@@ -22,8 +22,9 @@ const HealthContent = () => {
   return (
     <div className='flex flex-row grow justify-center overflow-auto flex-wrap'>
         <div className='flex flex-col gap-2 justify-start mx-2 my-6'>
-            <h3 className='text-center'>Visión Artificial</h3>
+            <h3 className='text-center'>Estado del invernadero</h3>
             <ImageCard></ImageCard>
+            <p className='text-sm text-base-300 text-center'>Las imágenes se actualizan cada 24h</p>
         </div>
     </div>
   );
@@ -31,65 +32,64 @@ const HealthContent = () => {
 
 function ImageCard() {
     const [imageSrc, setImageSrc] = useState('');
-    
-    // Función para obtener y enviar la imagen
+
     const fetchImage = async () => {
         try {
-            // Obtener la imagen desde el primer endpoint
-            const captureResponse = await fetch('http://192.168.1.202/capture');
-            if (captureResponse.ok) {
-                const imageBlob = await captureResponse.blob();
-                const imageUrl = URL.createObjectURL(imageBlob);
-                setImageSrc(imageUrl); // Establece la URL de la imagen en el estado
+            const response = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/img/last/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,
+                },
+            });
 
-                // Enviar la imagen al segundo endpoint
-                const formData = new FormData();
-                formData.append('image', imageBlob, 'image.jpg');
-                const postResponse = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/img`,
-                    {
-                      method: 'POST',
-                      headers: {
-                        'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
-                      },
-                      body: formData,
-                    }
-                  );
+            if (!response.ok) {
+                throw new Error('No se pudo obtener la imagen');
+            }
 
-                if (!postResponse.ok) {
-                    console.error('Error al enviar la imagen al servidor');
-                } else {
-                    console.log('Imagen enviada correctamente');
-                }
+            const data = await response.json();
+
+            if (data.image_base64) {
+                const base64Data = data.image_base64;
+                const fullSrc = `data:image/jpeg;base64,${base64Data}`;
+                setImageSrc(fullSrc);
             } else {
-                console.error('Error al obtener la imagen');
+                console.warn('No se encontró imagen en la respuesta');
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error al obtener la imagen:', error);
         }
     };
 
-    // Realiza la petición cuando el componente se monta
     useEffect(() => {
         fetchImage();
-    }, []); // Solo se ejecuta una vez cuando el componente se monta
+    }, []);
 
     return (
         <div className="card bg-base-100 w-96 shadow-sm">
             <figure className="px-10 pt-10 h-50">
-                <img
-                    src={imageSrc || 'loading-icon.svg'} // Imagen predeterminada si no se carga
+                {imageSrc &&
+                    <img
+                    src={imageSrc || 'loading.svg'}
                     alt="Imagen del invernadero"
                     className="rounded-xl"
-                />
+                    />
+                }
+                {!imageSrc &&
+                    <div className='flex flex-col align-middle justify-center items-center'>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7 48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7 48.656 48.656 0 0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3-3 3" />
+                        </svg>
+                        <p className='text-base-300 text-sm'>No se encontraron imagenes</p>
+                    </div>
+                  
+                }
+                
             </figure>
             <div className="card-body items-center text-center">
                 <h2 className="card-title">Invernadero-01</h2>
                 <p>Última actualización del invernadero</p>
                 <div className="card-actions flex flex-row">
-                    <button className="btn btn-accent" onClick={fetchImage}>
-                        Solicitar nueva imagen
-                    </button>
-                    <button className="btn btn-accent btn-disabled" onClick={fetchImage}>
+                    <button className="btn btn-accent btn-disabled">
                         Analizar
                     </button>
                 </div>
