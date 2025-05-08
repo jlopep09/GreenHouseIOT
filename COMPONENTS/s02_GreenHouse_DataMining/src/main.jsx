@@ -5,9 +5,10 @@ import { BrowserRouter, Route, Routes } from 'react-router'
 import Config from './components/views/Config.jsx'
 import Params from './components/views/Params.jsx'
 import Health from './components/views/Health.jsx'
-import Help from './components/views/Help.jsx'
+import Help from './components/views/Help/Help.jsx'
 import { Auth0Provider } from '@auth0/auth0-react'
 import ProtectedRoute from './components/views/ProtectedRoute.jsx'
+import Sync from './components/views/Help/Sync/Sync.jsx'
 
 
 createRoot(document.getElementById('root')).render(
@@ -57,6 +58,14 @@ createRoot(document.getElementById('root')).render(
               element={
                 <ProtectedRoute>
                   <Help />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/help/sync"
+              element={
+                <ProtectedRoute>
+                  <Sync />
                 </ProtectedRoute>
               }
             />
