@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 export default function ThemeModeButton() {
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light')
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'emerald')
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)

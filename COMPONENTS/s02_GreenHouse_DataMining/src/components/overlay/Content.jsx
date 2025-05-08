@@ -64,7 +64,7 @@ const ContentCard = ({ children }) => (
               <p>GH {latestRead?.gh_id ?? '-'}</p>
               <p>León</p>
               <p>{latestRead ? new Date(latestRead.date).toLocaleDateString() : '-'}</p>
-              <p>{latestRead ? "Conextado" : 'Sin conexión'}</p>
+              <p>{latestRead ? "Conectado" : 'Sin conexión'}</p>
             </div>
           </div>
         </ContentCardLarge>
