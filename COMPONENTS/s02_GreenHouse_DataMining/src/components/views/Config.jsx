@@ -15,9 +15,16 @@ export default function Config() {
                     {/* Page content here */}
                     <Navbar/>
                     <Devicebar/>
+                    <section className='flex flex-col justify-center align-middle items-center'>
+                    <h1 className='my-5 uppercase text-xl font-bold'>Configure su invernadero</h1>
+                    <p className='text-sm'>Mediante los siguientes formularios puede modificar automatizaciones de sus inveraderos.</p>
+                    <p className='text-sm mb-10'>Es importante destacar que las configuraciones son recupearadas de forma periódica por los módulos. Según la situación de conectividad actual del invernadero, el proceso puede tardar más en efectuarse.</p>
                     <ActuatorForm>
-                        <p>Config</p>
+                        <p>Configuración completa</p>
                     </ActuatorForm>
+
+                    </section>
+                    
                 </div>
                 <Sidebar/>
             </div>
