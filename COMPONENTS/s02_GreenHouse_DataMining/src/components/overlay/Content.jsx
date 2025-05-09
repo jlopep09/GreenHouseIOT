@@ -301,20 +301,22 @@ export const WaterCardContent = ({latestRead}) => {
       <strong className="m-2">Agua</strong>
 
       <div className=' min-w-4xs h-full'>
-        <TableRow title={"Temperatura:"}>{
-          (latestRead?.light_level === 'True' || latestRead?.light_level === 'False')
-              ? (latestRead?.light_level === 'True' ? 'On' : 'Off') : '-'
-          }</TableRow>
+        <TableRow title={"Temperatura:"}>
+          {latestRead&& (latestRead.water_temperature)}{!latestRead&& ("-")}
+          {console.log("water level: ",latestRead)}
+          </TableRow>
         <TableRow title={"TDS:"}>{
-          (latestRead?.readKey === 'True' || latestRead?.readKey === 'False')
-              ? (latestRead?.readKey === 'True' ? 'On' : 'Off') : '-'
+          (latestRead?.tds === 'True' || latestRead?.tds === 'False')
+              ? (latestRead?.tds === 'True' ? 'On' : 'Off') : '-'
           }</TableRow>
-                  <TableRow title={"Necesita llenado:"}>{
-          (latestRead?.readKey === 'True' || latestRead?.readKey === 'False')
-              ? (latestRead?.readKey === 'True' ? 'On' : 'Off') : '-'
-          }</TableRow>
+                  <TableRow title={"Necesita llenado:"}>
+          {latestRead&& (
+            (latestRead.water_level < 1000)? "Sí": "No"
+          )}{!latestRead&& ("-")}
+          </TableRow>
+          
           <div className='flex flex-row w-full justify-center align-middle mt-2'>
-            <button className="btn btn-primary">Bomba de agua</button>
+            <button className="btn btn-primary hidden">Bomba de agua</button>
           </div>
           
       </div>
@@ -328,16 +330,14 @@ export const AirCardContent = ({latestRead}) => {
       <strong className="m-2">Aire</strong>
 
       <div className=' min-w-4xs h-full'>
-        <TableRow title={"Temperatura:"}>{
-          (latestRead?.light_level === 'True' || latestRead?.light_level === 'False')
-              ? (latestRead?.light_level === 'True' ? 'On' : 'Off') : '-'
-          }</TableRow>
-        <TableRow title={"Humedad:"}>{
-          (latestRead?.readKey === 'True' || latestRead?.readKey === 'False')
-              ? (latestRead?.readKey === 'True' ? 'On' : 'Off') : '-'
-          }</TableRow>
+        <TableRow title={"Temperatura:"}>
+          {latestRead&& (latestRead.temperature)}{!latestRead&& ("-")}
+          </TableRow>
+        <TableRow title={"Humedad:"}>
+          {latestRead&& (latestRead.humidity)}{!latestRead&& ("-")}
+          </TableRow>
           <div className='flex flex-row w-full justify-center align-middle mt-2'>
-            <Link to='/config' className="btn btn-link font-bold text-md">Configurar ventiladores</Link>
+            <Link to='/config' className="btn btn-link font-bold text-md">Configuraciones</Link>
           </div>
           
       </div>
