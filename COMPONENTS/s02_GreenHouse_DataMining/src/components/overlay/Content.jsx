@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth0 } from "@auth0/auth0-react"; 
 import { Link } from 'react-router';
 import MiniLineChart from '../charts/MiniLineChart';
+import SingleActuatorForm from '../atoms/SingleActuatorForm';
 
 const ContentCard = ({ children }) => (
     <div className="card bg-base-200 shadow-sm min-h-60 col-span-1 p-4">
@@ -80,12 +81,7 @@ const ContentCard = ({ children }) => (
         
         </ContentCard>
         <ContentCardLarge>
-          <div className='flex flex-col align-start justify-center items-start gap-1'>
-              <strong className="block mb-2 -mt-1">Programadores</strong>
-              <button className='btn btn-primary font-bold w-full'>Ventilador</button>
-              <button className='btn btn-primary font-bold w-full'>Oxigenador</button>
-              <button className='btn btn-neutral font-bold w-full'>Luces</button>
-          </div>
+        <Programadores></Programadores>
         </ContentCardLarge>
         <ContentCard><TableCardContent latestRead={latestRead} title={"Luz"} readKey={"light"}/></ContentCard>
         <ContentCard><TableCardContent latestRead={latestRead} title={"Ventiladores"} readKey={"fan"}/></ContentCard>
@@ -95,6 +91,27 @@ const ContentCard = ({ children }) => (
       </div>
     );
   };
+
+
+function Programadores() {
+  return (
+    <div className='flex flex-col align-start justify-center items-start gap-1'>
+      <strong className="block mb-2 -mt-1 text-center w-full">Programadores</strong>
+      <SingleActuatorForm actuatorType="light">
+        Luces
+      </SingleActuatorForm>
+      <SingleActuatorForm actuatorType="pump" version = "dark">
+        Bomba de agua
+      </SingleActuatorForm>
+            <SingleActuatorForm actuatorType="fan" >
+        Ventiladores
+      </SingleActuatorForm>
+            <SingleActuatorForm actuatorType="oxigen" version = "dark">
+        Oxigenador
+      </SingleActuatorForm>
+    </div>
+  )
+}
 
 export const TableRow = ({children, title}) => {
   const rowClassNames = "flex flex-row justify-between w-full px-5 border-t-1 border-base-400 py-1"
