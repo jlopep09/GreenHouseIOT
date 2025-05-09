@@ -151,7 +151,7 @@ function GhCard({latestRead}){
             <div className='flex flex-col align-middle justify-center items-start'>
               <strong className="block mb-1 -mt-1">Invernadero</strong>
               <p>GH {latestRead?.gh_id ?? '-'}</p>
-              {greenhouses[0]&&(<p>greenhouses[0].description</p>)}
+              {greenhouses[0]&&(<p>{greenhouses[0].description}</p>)}
               {!greenhouses[0]&&(<p></p>)}
               <p>{latestRead ? new Date(latestRead.date).toLocaleDateString() : '-'}</p>
               <p>{latestRead ? "Conectado" : 'Sin conexión'}</p>
