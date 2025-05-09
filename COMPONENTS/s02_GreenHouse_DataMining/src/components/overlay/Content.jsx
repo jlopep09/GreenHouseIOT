@@ -27,7 +27,6 @@ const ContentCard = ({ children }) => (
       const fetchLatestRead = async () => {
         if (!isAuthenticated) return;
         try {
-          const token = await getAccessTokenSilently();
           const sub = user.sub;
           const response = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/reads/`, {
             method: 'GET',
@@ -57,16 +56,7 @@ const ContentCard = ({ children }) => (
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-6">
         <ContentCardLarge>
-          <div className="flex flex-row justify-center gap-4">
-            <div className="bg-primary w-30 h-30 rounded-md"></div>
-            <div className='flex flex-col align-middle justify-center items-start'>
-              <strong className="block mb-1 -mt-1">Invernadero</strong>
-              <p>GH {latestRead?.gh_id ?? '-'}</p>
-              <p>León</p>
-              <p>{latestRead ? new Date(latestRead.date).toLocaleDateString() : '-'}</p>
-              <p>{latestRead ? "Conectado" : 'Sin conexión'}</p>
-            </div>
-          </div>
+          <GhCard latestRead={latestRead}></GhCard>
         </ContentCardLarge>
   
         <ContentCard><AirCardContent latestRead={latestRead}/></ContentCard>
@@ -123,9 +113,53 @@ export const TableRow = ({children, title}) => {
   )
 
 }
+function GhCard({latestRead}){
+  const { user, isAuthenticated, getAccessTokenSilently, isLoading } = useAuth0();
+  const [greenhouses, setGreenhouses] = useState([]);
+  const [selectedGhId, setSelectedGhId] = useState(null);
+  useEffect(() => {
+  const fetchGreenhouses = async () => {
+    if (!isAuthenticated) return;
+    try {
+      const sub = user.sub;
+      const res = await fetch(
+        `${import.meta.env.VITE_DDBB_API_IP}/db/gh/`,
+        {
+          method: 'GET',
+          headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
+          'UserAuth': `${sub}`,
+          },
+        }
+      );
+      const data = await res.json();
+      if (data.greenhouses.length > 0) {
+          setGreenhouses(data.greenhouses);
+          setSelectedGhId(data.greenhouses[0].id);
+      }
+    } catch (err) {
+      console.error('Error fetching greenhouses:', err);
+    }
+  };
+  fetchGreenhouses();
+}, [isAuthenticated, getAccessTokenSilently, user]);
+
+  return (<div className="flex flex-row justify-center gap-4">
+            
+            {greenhouses[0]&&(<div className="bg-primary w-30 h-30 rounded-md"><img src={greenhouses[0].image}></img></div>)}
+            {!greenhouses[0]&&(<div className="bg-primary w-30 h-30 rounded-md"></div>)}
+            <div className='flex flex-col align-middle justify-center items-start'>
+              <strong className="block mb-1 -mt-1">Invernadero</strong>
+              <p>GH {latestRead?.gh_id ?? '-'}</p>
+              {greenhouses[0]&&(<p>greenhouses[0].description</p>)}
+              {!greenhouses[0]&&(<p></p>)}
+              <p>{latestRead ? new Date(latestRead.date).toLocaleDateString() : '-'}</p>
+              <p>{latestRead ? "Conectado" : 'Sin conexión'}</p>
+            </div>
+          </div>)
+}
 export const TableCardContent = ({latestRead, title, readKey}) => {
     const { user, isAuthenticated, getAccessTokenSilently, isLoading } = useAuth0();
-  
     const [greenhouses, setGreenhouses] = useState([]);
     const [selectedGhId, setSelectedGhId] = useState(null);
     const [configs, setConfigs] = useState({});
