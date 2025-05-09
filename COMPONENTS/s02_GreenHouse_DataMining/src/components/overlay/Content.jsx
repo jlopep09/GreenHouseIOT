@@ -305,13 +305,10 @@ export const WaterCardContent = ({latestRead}) => {
           {latestRead&& (latestRead.water_temperature)}{!latestRead&& ("-")}
           {console.log("water level: ",latestRead)}
           </TableRow>
-        <TableRow title={"TDS:"}>{
-          (latestRead?.tds === 'True' || latestRead?.tds === 'False')
-              ? (latestRead?.tds === 'True' ? 'On' : 'Off') : '-'
-          }</TableRow>
+        <TableRow title={"TDS:"}>{latestRead&& (latestRead.tds)}{!latestRead&& ("-")}</TableRow>
                   <TableRow title={"Necesita llenado:"}>
           {latestRead&& (
-            (latestRead.water_level < 1000)? "Sí": "No"
+            (latestRead.water_level < 40)? "Sí": "No"
           )}{!latestRead&& ("-")}
           </TableRow>
           
