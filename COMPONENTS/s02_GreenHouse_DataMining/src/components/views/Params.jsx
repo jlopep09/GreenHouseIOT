@@ -12,18 +12,29 @@ export default function Params() {
         <>
             <div className="drawer">
                 <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-                <div className="drawer-content flex grow flex-col overflow-hidden gap-3 my-4">
+                <div className="drawer-content flex grow flex-col overflow-hidden pb-4">
                     {/* Page content here */}
                     <Navbar/>
                     <Devicebar/>
-                    <section className='card bg-base-200 flex flex-row gap-4 justify-center'>
-                        <Linechart chartWidth={600}></Linechart>
-                        <Linechart metric="water_temperature" chartWidth={600} />
+                    <section className='card flex flex-row gap-4 justify-center my-3'>
+                        <div className='card bg-base-200'>
+                            <Linechart chartWidth={600}></Linechart>
+                        </div>
+                        <div className='card bg-base-200'>
+                            <Linechart metric="water_temperature" chartWidth={600} />
+                        </div>
+                        
                         
                     </section>
-                    <section className='card bg-base-200 flex flex-row gap-4 justify-center'>
-                        <Linechart metric="humidity" chartWidth={600} />
-                        <Linechart metric="tds" chartWidth={600} />
+                    <section className='card flex flex-row gap-4 justify-center my-3'>
+                        <div className='card bg-base-200'>
+                            <Linechart metric="humidity" chartWidth={600} />
+                        </div>
+                        <div className='card bg-base-200'>
+                            <Linechart metric="tds" chartWidth={600} />
+                        </div>
+                        
+                        
                         
                     </section>
                     {/**
