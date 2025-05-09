@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo} from 'react';
 import { useAuth0 } from "@auth0/auth0-react"; 
 import { Link } from 'react-router';
 import MiniLineChart from '../charts/MiniLineChart';
@@ -175,83 +175,115 @@ function GhCard({latestRead}){
             </div>
           </div>)
 }
-export const TableCardContent = ({latestRead, title, readKey}) => {
-    const { user, isAuthenticated, getAccessTokenSilently, isLoading } = useAuth0();
-    const [greenhouses, setGreenhouses] = useState([]);
-    const [selectedGhId, setSelectedGhId] = useState(null);
-    const [configs, setConfigs] = useState({});
-    
-      useEffect(() => {
-        const fetchGreenhouses = async () => {
-          if (!isAuthenticated) return;
-          try {
-            const sub = user.sub;
-            const res = await fetch(
-              `${import.meta.env.VITE_DDBB_API_IP}/db/gh/`,
-              {
-                method: 'GET',
-                headers: {
-                'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
-                'UserAuth': `${sub}`,
-                },
-              }
-            );
-            const data = await res.json();
-            if (data.greenhouses.length > 0) {
-                setGreenhouses(data.greenhouses);
-                setSelectedGhId(data.greenhouses[0].id);
-            }
-          } catch (err) {
-            console.error('Error fetching greenhouses:', err);
+export const TableCardContent = ({ latestRead, title, readKey }) => {
+  const { user, isAuthenticated } = useAuth0();
+  const [greenhouses, setGreenhouses] = useState([]);
+  const [selectedGhId, setSelectedGhId] = useState(null);
+  const [configs, setConfigs] = useState({});
+
+  useEffect(() => {
+    const fetchGreenhouses = async () => {
+      if (!isAuthenticated) return;
+      try {
+        const sub = user.sub;
+        const res = await fetch(
+          `${import.meta.env.VITE_DDBB_API_IP}/db/gh/`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,
+              UserAuth: `${sub}`,
+            },
           }
-        };
-        fetchGreenhouses();
-      }, [isAuthenticated, getAccessTokenSilently, user]);
-    
-      // Fetch configs cuando cambie el invernadero seleccionado
-      useEffect(() => {
-        const fetchConfigs = async () => {
-          if (!isAuthenticated || !selectedGhId) return;
-          try {
-            const sub = user.sub;
-            const res = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/`,
-                {
-                  method: 'GET',
-                  headers: {
-                    'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,  // Enviar el token en el header
-                    'UserAuth': `${sub}`,
-                },
-                }
-              );
-            const result = await res.json();
-            const map = {};
-            result.configs?.forEach(c => { map[c.name] = c; });
-            setConfigs(map);
-          } catch (err) {
-            console.error('Error fetching actuator configs:', err);
+        );
+        const data = await res.json();
+        if (data.greenhouses.length > 0) {
+          setGreenhouses(data.greenhouses);
+          setSelectedGhId(data.greenhouses[0].id);
+        }
+      } catch (err) {
+        console.error('Error fetching greenhouses:', err);
+      }
+    };
+    fetchGreenhouses();
+  }, [isAuthenticated, user]);
+
+  useEffect(() => {
+    const fetchConfigs = async () => {
+      if (!isAuthenticated || !selectedGhId) return;
+      try {
+        const sub = user.sub;
+        const res = await fetch(
+          `${import.meta.env.VITE_DDBB_API_IP}/db/ghconfig/`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,
+              UserAuth: `${sub}`,
+            },
           }
-        };
-        fetchConfigs();
-      }, [isAuthenticated, getAccessTokenSilently, selectedGhId, user]);
-  
+        );
+        const result = await res.json();
+        const map = {};
+        result.configs?.forEach(c => { map[c.name] = c; });
+        setConfigs(map);
+      } catch (err) {
+        console.error('Error fetching actuator configs:', err);
+      }
+    };
+    fetchConfigs();
+  }, [isAuthenticated, selectedGhId, user]);
+
   const cfg = configs[readKey] || {};
+
+  // Compute actual state based on mode and timers
+  const actualState = useMemo(() => {
+    if (cfg.auto === 0) {
+      // Manual mode: use manual_status (assumed 0 or 1)
+      return cfg.manual_status == 1 ? 'On' : 'Off';
+    }
+    if (cfg.auto === 1) {
+      // Auto mode: compare current time with timer_on/off
+      const now = new Date();
+      const secondsToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+      const onSec = Number(cfg.timer_on);
+      const offSec = Number(cfg.timer_off);
+      if (!isFinite(onSec) || !isFinite(offSec)) {
+        return '-';
+      }
+      // If on <= off, simple range; else overnight range
+      const isOn = onSec <= offSec
+        ? (secondsToday >= onSec && secondsToday < offSec)
+        : (secondsToday >= onSec || secondsToday < offSec);
+      return isOn ? 'On' : 'Off';
+    }
+    return '-';
+  }, [cfg]);
+
   return (
     <>
       <strong className="m-2">{title}</strong>
-      <div className='min-w-4xs h-full'>
-        <TableRow title={"Estado actual:"}>{
-          (latestRead?.light_level === 'True' || latestRead?.light_level === 'False')
-              ? (latestRead?.light_level === 'True' ? 'On' : 'Off') : '-'
-          }</TableRow>
-        <TableRow title={"Modo auto:"}>{(cfg.auto === 1 ||cfg.auto === 0)?((cfg.auto === 1)? 'Activado' : 'Desactivado'):"-"}</TableRow>
-        <TableRow title={"Hora de encendido:"}>{(cfg.auto === 1 ||cfg.auto === 0)?secondsToTimeString(cfg.timer_on):"-"}</TableRow>
-        <TableRow title={"Hora de apagado:"}>{(cfg.auto === 1 ||cfg.auto === 0)?secondsToTimeString(cfg.timer_off):"-"}</TableRow>
-        
+      <div className="min-w-4xs h-full">
+        <TableRow title="Estado actual:">{actualState}</TableRow>
+        <TableRow title="Modo auto:">{
+          cfg.auto === 1 ? 'Activado'
+          : cfg.auto === 0 ? 'Desactivado'
+          : '-'
+        }</TableRow>
+        <TableRow title="Hora de encendido:">{
+          (cfg.auto === 1 || cfg.auto === 0)
+            ? secondsToTimeString(cfg.timer_on)
+            : '-'
+        }</TableRow>
+        <TableRow title="Hora de apagado:">{
+          (cfg.auto === 1 || cfg.auto === 0)
+            ? secondsToTimeString(cfg.timer_off)
+            : '-'
+        }</TableRow>
       </div>
-
     </>
-  )
-}
+  );
+};
 const secondsToTimeString = (seconds) => {
   if (!seconds && seconds !== 0) return null;
   
