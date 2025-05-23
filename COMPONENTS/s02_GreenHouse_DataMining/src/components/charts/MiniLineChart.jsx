@@ -47,12 +47,15 @@ const MiniLineChart = ({
           );
           const values = sortedReads.map((read) => read[metric]);
 
+          // Número de puntos para saber primer y último
+          const n = timestamps.length;
+
           // Configuración del chart
           const { name, unit } = METRIC_CONFIG[metric] || {};
           setChartData({
             options: {
               chart: {
-                id: `${metric}-evolution`, 
+                id: `${metric}-evolution`,
                 sparkline: { enabled: false },
                 toolbar: { show: false },
               },
@@ -62,57 +65,55 @@ const MiniLineChart = ({
                 enabled: true,
                 y: { formatter: (val) => `${val} ${unit}` },
               },
-             xaxis: {
-               categories: timestamps,
-               labels: {
-                 show: true,
-                 style: {
-                   colors: '#888',
-                   fontSize: '8px',
-                 },
-                 // muestra solo primer y último tick para ahorrar espacio
-                 formatter: (_, idx, opts) => {
-                   const vals = opts.chartOptions.xaxis.categories;
-                   return (idx === 0 || idx === vals.length - 1) ? vals[idx] : '';
-                 }
-               },
-               axisBorder: {
-                 show: true,
-                 color: '#DDD',
-                 height: 1,
-               },
-               axisTicks: {
-                 show: true,
-                 color: '#DDD',
-                 width: 1,
-               },
-             },
-             yaxis: {
-               show: true,
-               min: Math.min(...values) * 0.98,  // ligerísimo margen abajo
-               max: Math.max(...values) * 1.02,  // margen arriba
-               labels: {
-                 show: true,
-                 style: {
-                   colors: '#888',
-                   fontSize: '8px',
-                 },
-               },
-               axisBorder: {
-                 show: true,
-                 color: '#DDD',
-               },
-               axisTicks: {
-                 show: true,
-                 color: '#DDD',
-                 width: 1,
-               },
-             },
-             grid: {
-               show: false,   // sin cuadrícula para mantener limpieza
-             },
+              xaxis: {
+                categories: timestamps,
+                labels: {
+                  show: true,
+                  style: {
+                    colors: "#888",
+                    fontSize: "8px",
+                  },
+                  // muestra solo primer y último tick
+                  formatter: function (val, idx) {
+                    return idx === 0 || idx === n - 1 ? val : "";
+                  },
+                },
+                axisBorder: {
+                  show: true,
+                  color: "#DDD",
+                },
+                axisTicks: {
+                  show: true,
+                  color: "#DDD",
+                  width: 1,
+                },
+              },
+              yaxis: {
+                show: true,
+                min: Math.min(...values) * 0.98, // margen abajo
+                max: Math.max(...values) * 1.02, // margen arriba
+                labels: {
+                  show: true,
+                  style: {
+                    colors: "#888",
+                    fontSize: "8px",
+                  },
+                },
+                axisBorder: {
+                  show: true,
+                  color: "#DDD",
+                },
+                axisTicks: {
+                  show: true,
+                  color: "#DDD",
+                  width: 1,
+                },
+              },
+              grid: {
+                show: false, // sin cuadrícula para limpieza
+              },
             },
-            series: [{ name: `${name}`, data: values }],
+            series: [{ name: name, data: values }],
           });
         }
       } catch (error) {

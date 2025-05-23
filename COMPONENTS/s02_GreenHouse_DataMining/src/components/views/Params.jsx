@@ -16,7 +16,7 @@ export default function Params() {
                     {/* Page content here */}
                     <Navbar/>
                     <Devicebar/>
-                    <section className='card flex flex-row gap-4 justify-center my-3'>
+                    <section className='card flex flex-col lg:flex-row gap-4 justify-center my-3'>
                         <div className='card bg-base-200'>
                             <Linechart chartWidth={600}></Linechart>
                         </div>
@@ -26,7 +26,7 @@ export default function Params() {
                         
                         
                     </section>
-                    <section className='card flex flex-row gap-4 justify-center my-3'>
+                    <section className='card flex flex-col lg:flex-row gap-4 justify-center my-3'>
                         <div className='card bg-base-200'>
                             <Linechart metric="humidity" chartWidth={600} />
                         </div>
