@@ -11,14 +11,14 @@
 
 int TDS_PIN = 4;
 int WATER_PIN = 5;
-int WATER_TEMP_PIN = 6;
-int DHTPIN = 7;
-int PHOTO_PIN = 15;
+int WATER_TEMP_PIN = 15;
+int DHTPIN = 6;
+int PHOTO_PIN = 7;
 
-int PIN_RELE_LUCES = 39;
-int PIN_RELE_OXIGENO = 40;
+int PIN_RELE_LUCES = 42;
+int PIN_RELE_OXIGENO = 39;
 int PIN_RELE_FAN = 41;
-int PIN_RELE_PUMP = 42;
+int PIN_RELE_PUMP = 40;
 
 /*
   NETWORK CONFIG

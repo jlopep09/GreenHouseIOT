@@ -28,7 +28,7 @@ void getSensorData(String& jsonData) {
     int waterLevel     = analogRead(WATER_PIN);
 
     String gh_ip = WiFi.localIP().toString();
-    String sync_code = "GH12SHh9427Hla"
+    String sync_code = "GH12SHh9427Hla";
 
     // 1) Sensor DHT22
     if (isnan(temperature) || isnan(humidity)) {
