@@ -1,0 +1,4 @@
+- import_playbook: playbooks/traefik.yml
+- import_playbook: playbooks/greenhouse-db.yml
+- import_playbook: playbooks/greenhouse.yml
+- import_playbook: playbooks/watchtower.yml
