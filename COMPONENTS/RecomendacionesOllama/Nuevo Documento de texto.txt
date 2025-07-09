@@ -1,0 +1,3 @@
+& curl.exe -X POST http://localhost:8080/analyze-crop `
+  -F "prompt=Temperatura: 25C, Humedad: 60%" `
+  -F "image=@cultivo.jpeg"
