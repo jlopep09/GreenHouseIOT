@@ -35,7 +35,9 @@ function ImageCard() {
 
     const fetchImage = async () => {
         try {
+            console.log(`${import.meta.env.VITE_DDBB_API_IP} esta es la variable xd`)
             const response = await fetch(`${import.meta.env.VITE_DDBB_API_IP}/db/img/last/`, {
+                
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${import.meta.env.VITE_SECRET_TOKEN}`,
