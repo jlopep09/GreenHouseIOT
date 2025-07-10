@@ -32,7 +32,8 @@ const HealthContent = () => {
 
 function ImageCard() {
     const [imageSrc, setImageSrc] = useState('');
-
+    const url = `${import.meta.env.VITE_DDBB_API_IP}/db/img/last`;
+    console.log("URL final que se va a usar:", url);
     const fetchImage = async () => {
         try {
             console.log(`${import.meta.env.VITE_DDBB_API_IP} esta es la variable xd`)
