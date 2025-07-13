@@ -50,7 +50,7 @@ Analiza la siguiente imagen de cultivo junto con los datos proporcionados.
 {prompt}
 
 Proporciona recomendaciones específicas y accionables basadas en:
-1. Lo que observas en la imagen
+1. La planta o cultivo que observas en la imagen
 2. Los datos de sensores proporcionados
 3. Mejores prácticas agrícolas
 

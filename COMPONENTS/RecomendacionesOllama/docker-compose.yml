@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   # Ollama backend
   ollama:
@@ -8,30 +10,27 @@ services:
       - ollama_data:/root/.ollama
     environment:
       - OLLAMA_HOST=0.0.0.0
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:11434/api/tags || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
 
   # Descarga automática del modelo
   model-downloader:
     image: curlimages/curl:latest
     depends_on:
-      ollama:
-        condition: service_healthy
+      - ollama
     command: >
       sh -c "
-        echo 'Descargando modelo LLaVA...' &&
+        echo 'Esperando a que Ollama esté listo...' &&
+        until curl -sf http://ollama:11434/api/tags; do
+          echo 'Ollama no está listo, reintentando en 2s...';
+          sleep 2;
+        done &&
+        echo 'Ollama está listo. Descargando modelo LLaVA...' &&
         curl -X POST http://ollama:11434/api/pull -d '{\"name\":\"llava:13b\"}' &&
         echo 'Modelo descargado exitosamente'
       "
@@ -42,8 +41,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.api
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     depends_on:
       - model-downloader
     environment:
@@ -55,5 +54,21 @@ services:
       timeout: 10s
       retries: 3
 
+  # HTTPS proxy con Caddy
+  caddy:
+    image: caddy:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - crop-api
+
 volumes:
   ollama_data:
+  caddy_data:
+  caddy_config:

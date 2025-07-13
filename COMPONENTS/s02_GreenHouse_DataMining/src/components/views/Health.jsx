@@ -92,7 +92,7 @@ function ImageCard() {
                 <p>Última actualización del invernadero</p>
                 <div className="card-actions flex flex-row">
                     <button className="btn btn-accent btn-disabled">
-                        Analizar
+                        Solicitar recomendación
                     </button>
                 </div>
             </div>

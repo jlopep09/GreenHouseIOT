@@ -1,0 +1,3 @@
+os.joselp.com {
+  reverse_proxy crop-api:8080
+}
