@@ -13,6 +13,7 @@ app.include_router(router_csv)
 Esta función hace fetch periodico de datos a el módulo indicado, 
 recoge los valores y los publica en el bus de kafka.
 """
+
 async def fetch_and_send_data():
     url = "http://192.168.1.201/read"
     timeout = aiohttp.ClientTimeout(total=10)  # Timeout de 10 segundos
@@ -71,6 +72,7 @@ async def fetch_and_send_img():
             print(f"Error inesperado: {e}")
         
         await asyncio.sleep(86400)
+
 @app.on_event("startup")
 async def startup_event():
     print(f"Iniciando suscripción de datos cada 30 segundos")

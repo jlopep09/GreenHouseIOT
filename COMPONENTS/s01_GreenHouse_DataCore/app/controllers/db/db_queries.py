@@ -235,11 +235,15 @@ def create_read(tds: int, humidity: int, water_level: int, temperature: int, lig
     try:
         conn = connector.get_con()
         cur = conn.cursor()
+
+        tds_in_range = tds
+        if(tds > 2000):
+            tds_in_range = 0
         
         # Inserta un nuevo registro en la tabla `greenhouses`
         cur.execute(
             "INSERT INTO sensor_reads (tds, humidity, water_level, temperature, light_level, water_temperature, gh_id) VALUES (?, ?, ?, ?, ?, ?,?)",
-            (tds, humidity, get_percentage(water_level, const.WATER_MIN_RANGE, const.WATER_MAX_RANGE), temperature, light_level,water_temperature, gh_id)
+            (tds_in_range, humidity, get_percentage_inverse(water_level, const.WATER_MIN_RANGE, const.WATER_MAX_RANGE), get_range_temperature(temperature, 0, 4095), light_level,water_temperature, gh_id)
         )
         
         # Confirma los cambios
@@ -257,3 +261,9 @@ def create_read(tds: int, humidity: int, water_level: int, temperature: int, lig
     
 def get_percentage(value: int,min_range: int, top_range: int) -> int:
     return int(interp(value, [min_range, top_range], [0,100] ))
+
+def get_percentage_inverse(value: int,min_range: int, top_range: int) -> int:
+    return 100 - int(interp(value, [min_range, top_range], [0,100] ))
+
+def get_range_temperature(value: int,min_range: int, top_range: int) -> int:
+    return int(interp(value, [min_range, top_range], [0,40] ))
