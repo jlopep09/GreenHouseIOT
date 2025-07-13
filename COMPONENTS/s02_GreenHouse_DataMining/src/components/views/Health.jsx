@@ -115,6 +115,7 @@ function ImageCard() {
   }, [])
 
   return (
+    <>
     <div className="card bg-base-100 w-96 shadow-sm">
       <figure className="px-10 pt-10 h-50 flex items-center justify-center">
         {loadingImg ? (
@@ -153,7 +154,7 @@ function ImageCard() {
         )}
       </figure>
 
-      <div className="card-body items-center text-center">
+      <div className="card-body items-center text-center align-middle justify-center">
         <h2 className="card-title">Invernadero-01</h2>
         <p>Última actualización del invernadero</p>
 
@@ -168,13 +169,15 @@ function ImageCard() {
 
           {error && <p className="text-error text-sm">{error}</p>}
 
-          {analysis && (
-            <div className="mt-4 p-4 bg-base-200 rounded-md text-left text-sm whitespace-pre-wrap">
-              {analysis}
-            </div>
-          )}
+          
         </div>
       </div>
     </div>
+    {analysis && (
+    <div className="mt-4 p-4 bg-base-200 rounded-md text-left text-sm w-3xl whitespace-pre-wrap">
+        {analysis}
+    </div>
+    )}
+    </>
   )
 }
