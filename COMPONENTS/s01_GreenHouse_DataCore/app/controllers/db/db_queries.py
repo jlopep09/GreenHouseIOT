@@ -244,7 +244,7 @@ def create_read(tds: int, humidity: int, water_level: int, temperature: int, lig
         # Inserta un nuevo registro en la tabla `greenhouses`
         cur.execute(
             "INSERT INTO sensor_reads (tds, humidity, water_level, temperature, light_level, water_temperature, gh_id) VALUES (?, ?, ?, ?, ?, ?,?)",
-            (tds_in_range, humidity, get_percentage_inverse(water_level, const.WATER_MIN_RANGE, const.WATER_MAX_RANGE), temperature, light_level,get_range_temperature(water_temperature), gh_id)
+            (tds_in_range, humidity, get_percentage_inverse(water_level, const.WATER_MIN_RANGE, const.WATER_MAX_RANGE), temperature, light_level,water_temperature, gh_id)
         )
         
         # Confirma los cambios
@@ -266,7 +266,3 @@ def get_percentage(value: int,min_range: int, top_range: int) -> int:
 def get_percentage_inverse(value: int,min_range: int, top_range: int) -> int:
     return 100 - int(interp(value, [min_range, top_range], [0,100] ))
 
-def get_range_temperature(value: int) -> float:
-    voltage = value * 3.3 / 4095  # Convierte a voltios
-    temperature = voltage * 100    # Si son 10mV por grado: 0.01V = 1°C
-    return temperature

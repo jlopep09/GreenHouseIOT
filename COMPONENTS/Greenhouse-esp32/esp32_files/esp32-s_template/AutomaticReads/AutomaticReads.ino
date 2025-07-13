@@ -4,6 +4,8 @@
 #include <ESPAsyncWebServer.h> //ESP32 Async WebServer ESP32Async v3.7.6 and Async TCP v3.3.8 ->v3.7.7 && v3.4.0
 #include <NTPClient.h>//NTPClient-Fabrice weinberg v3.2.1
 #include <WiFiUdp.h>
+#include <OneWire.h>// by Jim Studt
+#include <DallasTemperature.h> //by Miles Burton
 //Michael margolis v1.6.1
 //Adafruit unified sensor v 1.1.15
 
@@ -49,6 +51,7 @@ void fanSetup();
 void comprobarVentilador();
 void pumpSetup();
 void comprobarBomba();
+
 
 
 void setup() {

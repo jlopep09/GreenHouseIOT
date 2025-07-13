@@ -2,7 +2,8 @@
 #include <HTTPClient.h>
 #include <DHT.h>
 #include <ESPAsyncWebServer.h> 
-
+#include <OneWire.h>// by Jim Studt
+#include <DallasTemperature.h> //by Miles Burton
 #include <NTPClient.h>
 #include <WiFiUdp.h>
 
@@ -12,10 +13,13 @@
 //EXTRA DHT CONFIG
 #define DHTTYPE DHT22    
 DHT dht(DHTPIN, DHTTYPE);
-
+OneWire oneWire(WATER_TEMP_PIN);
+DallasTemperature sensors(&oneWire);
 void sensorsSetup(){
   //---------PINS AND SENSOR------------
   dht.begin();
+  sensors.begin();
+  Serial.println("DS18B20 iniciado");
 }
 
 void getSensorData(String& jsonData) {
@@ -24,7 +28,9 @@ void getSensorData(String& jsonData) {
 
     int lightLevel    = analogRead(PHOTO_PIN);
     int tds            = analogRead(TDS_PIN);
-    int waterTemp      = analogRead(WATER_TEMP_PIN);
+    sensors.requestTemperatures();
+    float waterTemp     = sensors.getTempCByIndex(0);
+    
     int waterLevel     = analogRead(WATER_PIN);
 
     String gh_ip = WiFi.localIP().toString();
@@ -50,6 +56,11 @@ void getSensorData(String& jsonData) {
     }
     // 4) Sensor de temperatura de agua
     if (isnan((float)waterTemp)) {
+        Serial.println("Error al leer la temperatura de agua");
+        jsonData = "{\"error\":\"Failed to read water temperature sensor\"}";
+        return;
+    }
+    if (waterTemp == DEVICE_DISCONNECTED_C) {
         Serial.println("Error al leer la temperatura de agua");
         jsonData = "{\"error\":\"Failed to read water temperature sensor\"}";
         return;
