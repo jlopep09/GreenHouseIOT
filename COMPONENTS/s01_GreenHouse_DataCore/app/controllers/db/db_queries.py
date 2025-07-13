@@ -266,5 +266,7 @@ def get_percentage(value: int,min_range: int, top_range: int) -> int:
 def get_percentage_inverse(value: int,min_range: int, top_range: int) -> int:
     return 100 - int(interp(value, [min_range, top_range], [0,100] ))
 
-def get_range_temperature(value: int,min_range: int, top_range: int) -> int:
-    return int(interp(value, [min_range, top_range], [0,40] ))
+def get_range_temperature(value: int) -> float:
+    voltage = value * 3.3 / 4095  # Convierte a voltios
+    temperature = voltage * 100    # Si son 10mV por grado: 0.01V = 1°C
+    return temperature
