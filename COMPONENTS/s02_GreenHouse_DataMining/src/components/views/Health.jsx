@@ -93,12 +93,13 @@ function ImageCard() {
 
       // Obtener última lectura y usarla sin editar como prompt
       const latestRead = await fetchLatestReadRaw()
+      console.log("Solicitando recomendacion con estos datos: "+latestRead)
       const promptRaw = JSON.stringify(latestRead)
 
       const form = new FormData()
       form.append('prompt', promptRaw)
       form.append('temperature', '0.3')
-      form.append('max_tokens', '1000')
+      form.append('max_tokens', '500')
 
       const resp = await fetch(
         `${import.meta.env.VITE_DDBB_API_IP}/db/img/forward-last`,

@@ -45,16 +45,16 @@ async def analyze_crop(
         # Crear prompt estructurado
         structured_prompt = f"""
 Eres un experto en agricultura y análisis de cultivos. 
-Analiza la siguiente imagen de cultivo junto con los datos proporcionados.
+Analiza la siguiente imagen de cultivo hidroponico junto con los datos proporcionados.
 
 {prompt}
 
 Proporciona recomendaciones específicas y accionables basadas en:
-1. La planta o cultivo que observas en la imagen
+1. La planta o cultivo que observas en la imagen. No pongas en la introducción comentarios sobre cableados, estructura del módulo hidropónico ni de macetas o contenedores
 2. Los datos de sensores proporcionados
 3. Mejores prácticas agrícolas
 
-Estructura tu respuesta de forma clara y práctica.
+Estructura tu respuesta de forma clara y práctica. Si no observas una planta o cultivo especifico indícalo. Intenta responder de forma concisa sin mensajes larguisimos ya que lo importante es que el usuario obtenga datos valiosos. 
 """
 
         # Preparar request para Ollama
