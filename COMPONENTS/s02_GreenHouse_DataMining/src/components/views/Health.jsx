@@ -115,8 +115,7 @@ function ImageCard() {
   }, [])
 
   return (
-    <>
-    <div className="card bg-base-100 w-96 shadow-sm">
+    <div className="card bg-base-100 w-96 shadow-sm mx-auto">
       <figure className="px-10 pt-10 h-50 flex items-center justify-center">
         {loadingImg ? (
           <span className="loading loading-spinner text-primary" />
@@ -139,12 +138,7 @@ function ImageCard() {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7 
-                   48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7c-.017.22-.032.441
-                   -.046.662M19.5 12l3-3m-3 3-3-3m-12 3c0 1.232.046
-                   2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7 48.656 48.656 0 
-                   0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7c.017-.22.032-.441
-                   .046-.662M4.5 12l3 3m-3-3-3 3"
+                d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7 48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7 48.656 48.656 0 0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3-3 3"
               />
             </svg>
             <p className="text-base-300 text-sm mt-2">
@@ -154,7 +148,7 @@ function ImageCard() {
         )}
       </figure>
 
-      <div className="card-body items-center text-center align-middle justify-center">
+      <div className="card-body items-center text-center">
         <h2 className="card-title">Invernadero-01</h2>
         <p>Última actualización del invernadero</p>
 
@@ -168,16 +162,15 @@ function ImageCard() {
           </button>
 
           {error && <p className="text-error text-sm">{error}</p>}
-
-          
         </div>
       </div>
+
+      {/* Recommendation section moved inside card with fixed width and wrapping */}
+      {analysis && (
+        <div className="px-6 py-4 bg-base-200 rounded-b-lg text-left text-sm whitespace-pre-wrap break-words">
+          {analysis}
+        </div>
+      )}
     </div>
-    {analysis && (
-    <div className="mt-4 p-4 bg-base-200 rounded-md text-left text-sm w-3xl whitespace-pre-wrap">
-        {analysis}
-    </div>
-    )}
-    </>
   )
 }
