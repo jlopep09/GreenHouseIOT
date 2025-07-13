@@ -238,12 +238,13 @@ def create_read(tds: int, humidity: int, water_level: int, temperature: int, lig
 
         tds_in_range = tds
         if(tds > 2000):
+            print("Tds no valido, valor demasiado alto ",tds)
             tds_in_range = 0
         
         # Inserta un nuevo registro en la tabla `greenhouses`
         cur.execute(
             "INSERT INTO sensor_reads (tds, humidity, water_level, temperature, light_level, water_temperature, gh_id) VALUES (?, ?, ?, ?, ?, ?,?)",
-            (tds_in_range, humidity, get_percentage_inverse(water_level, const.WATER_MIN_RANGE, const.WATER_MAX_RANGE), get_range_temperature(temperature, 0, 4095), light_level,water_temperature, gh_id)
+            (tds_in_range, humidity, get_percentage_inverse(water_level, const.WATER_MIN_RANGE, const.WATER_MAX_RANGE), temperature, light_level,get_range_temperature(water_temperature, 0, 4095), gh_id)
         )
         
         # Confirma los cambios
