@@ -3,7 +3,7 @@ import app.controllers.db.connector as connector
 import app.controllers.db.db_queries as db_queries
 import mariadb
 
-router = APIRouter(tags=["MariaDB"],prefix="/db")
+router = APIRouter(tags=["MariaDB"], prefix="/db")
 
 
 def get_ghconfigs(user_auth0_id: str):
@@ -61,6 +61,45 @@ def get_ghconfigs(user_auth0_id: str):
     except mariadb.Error as e:
         print(f"Error retrieving configs for user {user_auth0_id}: {e}")
         raise HTTPException(status_code=500, detail="Failed to retrieve configs")
+
+
+def get_ghconfigs_for_greenhouse( gh_id: int):
+
+    print(f"Obteniendo configuraciones del invernadero {gh_id}")
+    configs = []
+    try:
+        conn = connector.get_con()
+        cur = conn.cursor()
+
+
+        # Recuperar actuadores de ese invernadero
+        cur.execute("SELECT * FROM actuators WHERE gh_id = ?", (gh_id,))
+        columns = [col[0] for col in cur.description]
+        for row in cur.fetchall():
+            cfg = dict(zip(columns, row))
+
+            # Normalizar 'auto'
+            raw_auto = cfg.get('auto')
+            if isinstance(raw_auto, (bytes, bytearray)):
+                cfg['auto'] = int.from_bytes(raw_auto, 'little')
+            elif isinstance(raw_auto, str) and len(raw_auto) == 1:
+                cfg['auto'] = ord(raw_auto)
+
+            # Normalizar 'manual_status'
+            raw_manual = cfg.get('manual_status')
+            if isinstance(raw_manual, (bytes, bytearray)):
+                cfg['manual_status'] = int.from_bytes(raw_manual, 'little')
+            elif isinstance(raw_manual, str) and len(raw_manual) == 1:
+                cfg['manual_status'] = ord(raw_manual)
+
+            configs.append(cfg)
+
+        conn.close()
+        return {"configs": configs}
+
+    except mariadb.Error as e:
+        print(f"Error retrieving configs for greenhouse {gh_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve greenhouse configs")
 
 
 def create_ghconfig(user_auth0_id: str, actuator_data: dict):
@@ -128,6 +167,7 @@ def create_ghconfig(user_auth0_id: str, actuator_data: dict):
     except mariadb.Error as e:
         print(f"Error al crear configuración: {e}")
         raise HTTPException(status_code=500, detail=f"Error al crear configuración: {str(e)}")
+
 def update_ghconfig(user_auth0_id: str, actuator_id: int, actuator_data: dict):
     print(f"Actualizando configuración de actuador {actuator_id} para usuario {user_auth0_id}")
     try:
@@ -197,20 +237,29 @@ def update_ghconfig(user_auth0_id: str, actuator_id: int, actuator_data: dict):
     except mariadb.Error as e:
         print(f"Error al actualizar configuración: {e}")
         raise HTTPException(status_code=500, detail=f"Error al actualizar configuración: {str(e)}")
+
 """
     ROUTER ENDPOINTS
 """
 @router.get("/reads/")
 async def get_all_reads(user_auth0_id: str = Header(..., alias="UserAuth")):
-    return (db_queries.get_reads(user_auth0_id))
+    return db_queries.get_reads(user_auth0_id)
    
 @router.get("/ghconfig/")
-async def get_all_reads(user_auth0_id: str = Header(..., alias="UserAuth")):
+async def get_all_ghconfigs(user_auth0_id: str = Header(..., alias="UserAuth")):
     return get_ghconfigs(user_auth0_id)
   
 @router.get("/reads/{id}")
 async def get_reads_from_greenhouse_id(id: int):
-    return (db_queries.get_reads_byid(id))
+    return db_queries.get_reads_byid(id)
+
+@router.get("/ghconfig/{gh_id}")
+async def get_ghconfigs_by_greenhouse(
+    gh_id: int,
+    
+):
+    """Devuelve las configuraciones de actuadores para un invernadero específico"""
+    return get_ghconfigs_for_greenhouse(gh_id)
 
 @router.post("/ghconfig/")
 async def create_actuator_config(
