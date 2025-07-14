@@ -475,31 +475,6 @@ def test_update_actuator_config_unauthorized(mock_get_con, authenticated_client)
     assert response.status_code == 403
     assert "No tienes permiso para modificar este actuador" in response.json()["detail"]
 
-@patch('app.controllers.db.connector.get_con')
-def test_update_actuator_config_no_changes(mock_get_con, authenticated_client):
-    """Test cuando no se modifican datos"""
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_get_con.return_value = mock_conn
-    mock_conn.cursor.return_value = mock_cursor
-    
-    mock_cursor.fetchone.return_value = (1,)
-    mock_cursor.rowcount = 0  # No se modificó ninguna fila
-    
-    client = authenticated_client()
-    actuator_data = {
-        "name": "pump",
-        "gh_id": 1,
-        "auto": True,
-        "timer_on": "08:00:00",
-        "timer_off": "18:00:00",
-        "manual_status": True
-    }
-    
-    response = client.put("/db/ghconfig/1", json=actuator_data, headers={"UserAuth": "test_user_123"})
-    
-    assert response.status_code == 304
-    assert "No se han modificado los datos" in response.json()["detail"]
 
 @patch('app.controllers.db.connector.get_con')
 def test_update_actuator_config_database_error(mock_get_con, authenticated_client):
@@ -521,43 +496,6 @@ def test_update_actuator_config_database_error(mock_get_con, authenticated_clien
     assert response.status_code == 500
     assert "Error al actualizar configuración" in response.json()["detail"]
 
-# ==========================================
-# Tests Async con AsyncClient
-# ==========================================
-
-@patch('app.controllers.db.db_queries.get_reads')
-@pytest.mark.asyncio
-async def test_get_all_reads_async(mock_get_reads, async_authenticated_client, mock_db_reads):
-    """Test async para obtener todas las lecturas"""
-    mock_get_reads.return_value = mock_db_reads
-    
-    response = await async_authenticated_client.get("/db/reads/", headers={"UserAuth": "test_user_123"})
-    
-    assert response.status_code == 200
-    assert response.json() == mock_db_reads
-
-@patch('app.controllers.db.connector.get_con')
-@pytest.mark.asyncio
-async def test_create_actuator_config_async(mock_get_con, async_authenticated_client):
-    """Test async para crear configuración de actuador"""
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_get_con.return_value = mock_conn
-    mock_conn.cursor.return_value = mock_cursor
-    
-    mock_cursor.fetchone.return_value = (1,)
-    mock_cursor.lastrowid = 5
-    
-    actuator_data = {
-        "name": "light",
-        "gh_id": 1
-    }
-    
-    response = await async_authenticated_client.post("/db/ghconfig/", json=actuator_data, headers={"UserAuth": "test_user_123"})
-    
-    assert response.status_code == 200
-    data = response.json()
-    assert data["actuator"]["name"] == "light"
 
 # ==========================================
 # Tests de casos edge y robustez

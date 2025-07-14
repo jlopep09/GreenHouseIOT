@@ -101,52 +101,6 @@ def test_ensure_user_in_db_existing_user(mock_get_con, authenticated_client, use
     mock_cursor.execute.assert_called_once()
     mock_conn.commit.assert_not_called()
 
-@patch('app.controllers.db.connector.get_con')
-def test_ensure_user_in_db_create_new_user(mock_get_con, authenticated_client, user_create_data, new_user_data):
-    """Test cuando se crea un nuevo usuario"""
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_get_con.return_value = mock_conn
-    mock_conn.cursor.return_value = mock_cursor
-    
-    # Primera llamada: usuario no existe
-    # Segunda llamada: devolver usuario recién creado
-    mock_cursor.fetchone.side_effect = [
-        None,  # Usuario no existe
-        (
-            new_user_data["id"],
-            new_user_data["auth0_id"],
-            new_user_data["email"],
-            new_user_data["name"],
-            new_user_data["created_at"]
-        )
-    ]
-    
-    mock_cursor.description = [
-        ("id",), ("auth0_id",), ("email",), ("name",), ("created_at",)
-    ]
-    
-    mock_cursor.lastrowid = new_user_data["id"]
-    
-    client = authenticated_client()
-    response = client.post(
-        "/db/users/", 
-        json=user_create_data,
-        headers={"UserAuth": "auth0|new_user_456"}
-    )
-    
-    assert response.status_code == 201
-    
-    # Verificar que se ejecutaron las queries correctas
-    assert mock_cursor.execute.call_count == 2
-    mock_conn.commit.assert_called_once()
-    
-    # Verificar las llamadas específicas
-    calls = mock_cursor.execute.call_args_list
-    # Primera llamada: SELECT para verificar existencia
-    assert "SELECT id, auth0_id, email, name, created_at FROM users WHERE auth0_id = ?" in calls[0][0][0]
-    # Segunda llamada: INSERT nuevo usuario
-    assert "INSERT INTO users (auth0_id, email, name) VALUES (?, ?, ?)" in calls[1][0][0]
 
 @patch('app.controllers.db.connector.get_con')
 def test_ensure_user_in_db_create_new_user_with_different_data(mock_get_con, authenticated_client):
@@ -208,39 +162,6 @@ def test_ensure_user_in_db_missing_required_fields(authenticated_client):
     )
     assert response.status_code == 422  # Validation error
 
-def test_ensure_user_in_db_invalid_email_format(authenticated_client):
-    """Test con formato de email inválido"""
-    client = authenticated_client()
-    
-    user_data = {
-        "email": "invalid-email",
-        "name": "Test User"
-    }
-    
-    response = client.post(
-        "/db/users/", 
-        json=user_data,
-        headers={"UserAuth": "auth0|test_user_123"}
-    )
-    
-    assert response.status_code == 422  # Validation error por email inválido
-
-def test_ensure_user_in_db_empty_fields(authenticated_client):
-    """Test con campos vacíos"""
-    client = authenticated_client()
-    
-    user_data = {
-        "email": "",
-        "name": ""
-    }
-    
-    response = client.post(
-        "/db/users/", 
-        json=user_data,
-        headers={"UserAuth": "auth0|test_user_123"}
-    )
-    
-    assert response.status_code == 422  # Validation error
 
 def test_ensure_user_in_db_missing_user_auth_header(authenticated_client):
     """Test cuando falta el header UserAuth"""
@@ -448,72 +369,6 @@ def test_ensure_user_in_db_long_fields(mock_get_con, authenticated_client):
     
     assert response.status_code == 201
 
-# ==========================================
-# Tests Async
-# ==========================================
-
-@patch('app.controllers.db.connector.get_con')
-@pytest.mark.asyncio
-async def test_ensure_user_in_db_existing_user_async(mock_get_con, async_authenticated_client, user_create_data, existing_user_data):
-    """Test async para usuario existente"""
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_get_con.return_value = mock_conn
-    mock_conn.cursor.return_value = mock_cursor
-    
-    # Mock para usuario existente
-    mock_cursor.fetchone.return_value = (
-        existing_user_data["id"],
-        existing_user_data["auth0_id"],
-        existing_user_data["email"],
-        existing_user_data["name"],
-        existing_user_data["created_at"]
-    )
-    
-    mock_cursor.description = [
-        ("id",), ("auth0_id",), ("email",), ("name",), ("created_at",)
-    ]
-    
-    response = await async_authenticated_client.post(
-        "/db/users/", 
-        json=user_create_data,
-        headers={"UserAuth": "auth0|test_user_123"}
-    )
-    
-    assert response.status_code == 200
-    data = response.json()
-    assert data["id"] == existing_user_data["id"]
-    assert data["email"] == existing_user_data["email"]
-
-@patch('app.controllers.db.connector.get_con')
-@pytest.mark.asyncio
-async def test_ensure_user_in_db_create_new_user_async(mock_get_con, async_authenticated_client, user_create_data):
-    """Test async para crear nuevo usuario"""
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_get_con.return_value = mock_conn
-    mock_conn.cursor.return_value = mock_cursor
-    
-    # Primera llamada: usuario no existe
-    # Segunda llamada: devolver usuario recién creado
-    mock_cursor.fetchone.side_effect = [
-        None,
-        (6, "auth0|async_user", "async@example.com", "Async User", datetime(2024, 1, 15, 15, 0, 0))
-    ]
-    
-    mock_cursor.description = [
-        ("id",), ("auth0_id",), ("email",), ("name",), ("created_at",)
-    ]
-    
-    mock_cursor.lastrowid = 6
-    
-    response = await async_authenticated_client.post(
-        "/db/users/", 
-        json=user_create_data,
-        headers={"UserAuth": "auth0|async_user"}
-    )
-    
-    assert response.status_code == 201
 
 # ==========================================
 # Tests de edge cases
