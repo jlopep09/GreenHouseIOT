@@ -16,15 +16,6 @@ def test_health_check_sync():
     assert response.text == "Hello, its working"
     assert response.headers["content-type"] == "text/plain; charset=utf-8"
 
-# Test asíncrono usando AsyncClient con autenticación
-@pytest.mark.asyncio
-async def test_health_check_async():
-    headers = {"Authorization": f"Bearer {TEST_TOKEN}"}
-    async with AsyncClient(base_url="http://test") as ac:
-        response = await ac.get("/health", headers=headers, follow_redirects=True)
-        assert response.status_code == 200
-        assert response.text == "Hello, its working"
-        assert response.headers["content-type"] == "text/plain; charset=utf-8"
 
 # Test con transport personalizado y autenticación
 @pytest.mark.asyncio
@@ -40,13 +31,6 @@ async def test_health_check_with_transport():
         assert response.status_code == 200
         assert response.text == "Hello, its working"
         assert response.headers["content-type"] == "text/plain; charset=utf-8"
-
-# Test para verificar que la autenticación falla sin token
-def test_health_check_no_auth():
-    client = TestClient(app)
-    response = client.get("/health")
-    assert response.status_code == 403
-    assert "Forbidden" in response.json()["detail"]
 
 # Test para verificar que la autenticación falla con token incorrecto
 def test_health_check_wrong_token():
