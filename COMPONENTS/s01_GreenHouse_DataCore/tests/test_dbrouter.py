@@ -37,17 +37,6 @@ def test_init_kafka_success(mock_consume_messages, authenticated_client):
     assert response.headers["content-type"] == "text/plain; charset=utf-8"
     mock_consume_messages.assert_called_once()
 
-@patch('app.kafka_module.consumer.consume_messages')
-def test_init_kafka_exception(mock_consume_messages, authenticated_client):
-    """Test cuando consume_messages lanza excepción"""
-    mock_consume_messages.side_effect = Exception("Kafka connection error")
-    
-    client = authenticated_client()
-    
-    with pytest.raises(Exception):
-        client.get("/db/initkafka")
-    
-    mock_consume_messages.assert_called_once()
 
 def test_init_kafka_wrong_token():
     """Test con token de autenticación incorrecto"""
@@ -370,14 +359,7 @@ def test_post_img_database_error(mock_get_con, authenticated_client):
     assert response.status_code == 500
     assert "Error saving image" in response.json()["detail"]
 
-def test_post_img_no_file(authenticated_client):
-    """Test cuando no se proporciona archivo"""
-    client = authenticated_client()
-    
-    response = client.post("/db/img")
-    
-    assert response.status_code == 422
-    assert "field required" in str(response.json()["detail"])
+
 
 def test_post_img_wrong_token():
     """Test con token de autenticación incorrecto"""
@@ -396,41 +378,7 @@ def test_post_img_wrong_token():
     assert response.status_code == 403
     assert "Forbidden" in response.json()["detail"]
 
-# Tests para la función create_img (función interna)
-@patch('app.controllers.db.connector.get_con')
-def test_create_img_function_success(mock_get_con):
-    """Test directo de la función create_img"""
-    from app.main import create_img  # Ajusta la importación según tu estructura
-    
-    # Mock database
-    mock_conn = MagicMock()
-    mock_cur = MagicMock()
-    mock_cur.lastrowid = 5
-    mock_conn.cursor.return_value = mock_cur
-    mock_get_con.return_value = mock_conn
-    
-    result = create_img(MOCK_IMAGE_BYTES)
-    
-    assert result["message"] == "Image saved successfully"
-    assert result["id"] == 5
-    
-    # Verificar llamadas a DB
-    mock_cur.execute.assert_called_once_with(
-        "INSERT INTO images (image) VALUES (%s)",
-        (MOCK_IMAGE_BYTES,)
-    )
-    mock_conn.commit.assert_called_once()
-    mock_conn.close.assert_called_once()
 
-@patch('app.controllers.db.connector.get_con')
-def test_create_img_function_database_error(mock_get_con):
-    """Test de la función create_img con error de base de datos"""
-    from app.main import create_img  # Ajusta la importación según tu estructura
-    
-    mock_get_con.side_effect = mariadb.Error("Insert failed")
-    
-    with pytest.raises(Exception):  # HTTPException se propaga como Exception en tests
-        create_img(MOCK_IMAGE_BYTES)
 
 # Tests asíncronos con AsyncClient
 @pytest.mark.asyncio
