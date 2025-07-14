@@ -35,10 +35,12 @@ app.include_router(reads_router)
 async def get_root():
     return PlainTextResponse("Hello, its working")
 
+# pragma: no cover
 @app.on_event("startup")
 async def startup_event():
     print(f"Conectando a Kafka en kafka:9092...")
     asyncio.create_task(kf.consume_messages())
+# end pragma: no cover
 
 app.add_middleware(
     CORSMiddleware,
