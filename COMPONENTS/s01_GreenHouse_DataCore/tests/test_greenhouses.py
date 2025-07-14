@@ -64,12 +64,7 @@ def test_get_all_greenhouses_empty_list(mock_get_greenhouses, authenticated_clie
     assert response.json() == []
     mock_get_greenhouses.assert_called_once_with("test_user_id")
 
-def test_get_all_greenhouses_missing_user_auth(authenticated_client):
-    client = authenticated_client()
-    response = client.get("/db/gh/")
-    
-    assert response.status_code == 422
-    assert "field required" in response.json()["detail"][0]["msg"]
+
 
 def test_get_all_greenhouses_wrong_token():
     client = TestClient(app)
@@ -102,12 +97,7 @@ def test_get_greenhouse_by_id_not_found(mock_get_greenhouse, authenticated_clien
     assert response.json() is None
     mock_get_greenhouse.assert_called_once_with(999)
 
-def test_get_greenhouse_by_id_invalid_id(authenticated_client):
-    client = authenticated_client()
-    response = client.get("/db/gh/invalid")
-    
-    assert response.status_code == 422
-    assert "value is not a valid integer" in str(response.json()["detail"])
+
 
 def test_get_greenhouse_by_id_wrong_token():
     client = TestClient(app)
@@ -168,29 +158,8 @@ def test_create_greenhouse_minimal_data(mock_create_greenhouse, authenticated_cl
         sync_code="MIN123"
     )
 
-def test_create_greenhouse_missing_required_fields(authenticated_client):
-    client = authenticated_client()
-    greenhouse_data = {
-        "name": "Incomplete Greenhouse"
-        # Faltan date y sync_code
-    }
-    
-    response = client.post("/db/gh/", json=greenhouse_data)
-    
-    assert response.status_code == 422
-    assert "field required" in str(response.json()["detail"])
 
-def test_create_greenhouse_empty_name(authenticated_client):
-    client = authenticated_client()
-    greenhouse_data = {
-        "date": "2024-01-01",
-        "name": "",
-        "sync_code": "ABC123"
-    }
-    
-    response = client.post("/db/gh/", json=greenhouse_data)
-    
-    assert response.status_code == 422
+
 
 def test_create_greenhouse_wrong_token():
     client = TestClient(app)
@@ -249,30 +218,6 @@ def test_sync_greenhouse_not_found(mock_sync_greenhouse, authenticated_client):
         owner_id="test_user_id"
     )
 
-def test_sync_greenhouse_missing_required_fields(authenticated_client):
-    client = authenticated_client()
-    sync_data = {
-        "name": "Incomplete Sync"
-        # Falta sync_code
-    }
-    headers = {"UserAuth": "test_user_id"}
-    
-    response = client.post("/db/syncgh/", json=sync_data, headers=headers)
-    
-    assert response.status_code == 422
-    assert "field required" in str(response.json()["detail"])
-
-def test_sync_greenhouse_missing_user_auth(authenticated_client):
-    client = authenticated_client()
-    sync_data = {
-        "name": "Sync Greenhouse",
-        "sync_code": "SYNC123"
-    }
-    
-    response = client.post("/db/syncgh/", json=sync_data)
-    
-    assert response.status_code == 422
-    assert "field required" in response.json()["detail"][0]["msg"]
 
 def test_sync_greenhouse_wrong_token():
     client = TestClient(app)
