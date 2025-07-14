@@ -6,7 +6,39 @@ on:
       - main
 
 jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: COMPONENTS/s01_GreenHouse_DataCore
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'  # O la versión que uses
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run tests with coverage
+        run: |
+          pytest --cov=app tests/ --cov-report=xml
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: COMPONENTS/s01_GreenHouse_DataCore/coverage.xml
+
   build-and-push:
+    needs: run-tests
     runs-on: ubuntu-latest
 
     steps:
@@ -23,7 +55,6 @@ jobs:
         key: ${{ runner.os }}-buildx-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-buildx-
-    
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
@@ -38,4 +69,3 @@ jobs:
         dockerfile: ./COMPONENTS/s01_GreenHouse_DataCore/Dockerfile
         push: true
         tags: jlopep09/greenhouse-backend:latest
-
