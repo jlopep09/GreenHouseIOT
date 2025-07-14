@@ -9,6 +9,7 @@ numpy
 python-dotenv
 python-multipart
 asyncio
+httpx
 pytest
 pytest-cov
-httpx
+pytest-anyio
