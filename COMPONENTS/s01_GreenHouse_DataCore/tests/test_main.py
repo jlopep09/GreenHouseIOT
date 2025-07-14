@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 from app.main import app
 
 # Configurar el token para los tests
-TEST_TOKEN = os.getenv("SECRET_TOKEN", "test-token-123")
+TEST_TOKEN = os.getenv("SECRET_TOKEN", "secretgh")
 
 # Test síncrono usando TestClient con autenticación
 def test_health_check_sync():
