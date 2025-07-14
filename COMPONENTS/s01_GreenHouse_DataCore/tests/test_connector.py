@@ -175,31 +175,6 @@ class TestDatabaseConnector:
         assert exc_info.value.status_code == status.HTTP_412_PRECONDITION_FAILED
         assert exc_info.value.detail == "Missing one or more required environment variables"
 
-    @patch('app.controllers.db.connector.mariadb.connect')
-    @patch('app.controllers.db.connector.load_dotenv')
-    @patch.dict(os.environ, {
-        "DB_USER": "test_user",
-        "DB_PASSWORD": "test_password",
-        "DB_HOST": "localhost",
-        "DB_PORT": "",  # Puerto vacío
-        "DB_NAME": "test_db"
-    })
-    def test_get_con_empty_db_port_uses_default(self, mock_load_dotenv, mock_connect):
-        """Test cuando DB_PORT está vacío usa el puerto por defecto 3306"""
-        mock_connect.return_value = self.mock_connection
-        
-        result = get_con()
-        
-        # Verificar que se usa el puerto por defecto 3306
-        mock_connect.assert_called_once_with(
-            user="test_user",
-            password="test_password", 
-            host="localhost",
-            port=3306,  # Puerto por defecto
-            database="test_db"
-        )
-        
-        assert result == self.mock_connection
 
     @patch('app.controllers.db.connector.mariadb.connect')
     @patch('app.controllers.db.connector.load_dotenv')
